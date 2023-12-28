@@ -1,5 +1,5 @@
 import unittest
-from world.obstacles import *
+from maze.obstacles import *
 from test_base import captured_output
 
 class Test_Obstacle(unittest.TestCase):

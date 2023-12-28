@@ -1,5 +1,5 @@
 from sys import argv
-from world import obstacles
+from maze import obstacles
 gui_loader = argv
 gui_loader = [word.lower() for word in gui_loader]
 if 'turtle' in gui_loader:

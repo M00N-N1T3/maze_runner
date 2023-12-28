@@ -5,7 +5,7 @@ from unittest.mock import patch
 from robot import *
 from mechanics import *
 import random
-from world.obstacles import *
+from maze.obstacles import *
 
 
 turtle_variable = None

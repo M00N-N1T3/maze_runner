@@ -1,7 +1,8 @@
-from world import world,obstacles
+from world import world
 import sys
 import movement_logics
 import replay
+from maze import obstacles
 
 gui_loader = sys.argv
 gui_loader = [word.lower() for word in gui_loader]

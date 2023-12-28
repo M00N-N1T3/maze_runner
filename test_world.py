@@ -3,7 +3,7 @@ from test_base import captured_output, captured_io
 from world.text.world import *
 from robot import main_logic
 from io import StringIO
-from world.obstacles import *
+from maze.obstacles import *
 
 
 
