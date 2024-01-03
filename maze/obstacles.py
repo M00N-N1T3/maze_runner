@@ -106,15 +106,16 @@ def is_path_blocked(position1: tuple,position2: tuple,obstacles: list) -> bool:
     x2,y2 = position2
 
 
-
+    # bug add command check here 
+    # if back, all + must be -
     if x1 == x2:
         step = -1 if y2 < y1 else 1
-        for y in range(y1,y2+1,step):
+        for y in range(y1,y2+step,step):
             if is_position_blocked(x1,y,obstacles):
                 return True
     elif y1 == y2:
         step = -1 if x2 < x1 else 1
-        for x in range(x1,x2+1,step):
+        for x in range(x1,x2+step,step):
             if is_position_blocked(x,y1,obstacles):
                 return True
 
