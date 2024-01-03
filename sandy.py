@@ -304,7 +304,7 @@ def robot_start():
     robot_name = name_robot()
     greet_user(robot_name)
     # creating the obstacles
-    obstacle = sandbox.generate_cells(200,100,50)
+    obstacle = sandbox.generate_cells(200,100,10)
     # obstacle = obstacles.generate_obstacles()
     if len(obstacle) > 0:
         world.show_obstacles(obstacle)
