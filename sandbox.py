@@ -125,7 +125,7 @@ def paint_color(cell: list|tuple, color: list):
     turtle.penup()
     turtle.goto(int(x1),int(y1))
 
-    turtle.pen(pendown=True,fillcolor=color,pensize=1,pencolor=color,speed=0)
+    turtle.pen(pendown=False,fillcolor=color,pensize=0,pencolor=color,speed=0)
     turtle.begin_fill()
     for cord in cell[1:]:
         x,y = cord
@@ -160,7 +160,8 @@ def stack_control(cells: list,stack: list):
 
 
 
-def neighboring_cell(height: int,width: int,cell_size: int,current_cell_index: int) -> list:
+
+def neighboring_cell(height: int,width: int,cell_size: int,current_cell_index: int):
     """
     Calculates and predicts the index(s) of neighboring cells
     to the current cell
@@ -170,7 +171,6 @@ def neighboring_cell(height: int,width: int,cell_size: int,current_cell_index: i
         width (int): Width of the maze
         cell_size (int): Size / Area of a single cell block
         current_cell_index (int): The index of the current cell we are in
-
     Returns:
         list: a list of the available neighbors
     """
@@ -216,6 +216,58 @@ def neighboring_cell(height: int,width: int,cell_size: int,current_cell_index: i
 
     return neighbors
 
+
+def cell_design(cell_ref: list, ele_index: int, visited_cells: list, stack: list, wall_color = 'black'):
+    """
+    Designs the cell. Sets/changes  the color attributes
+    of the specified element to a specified color
+
+    Args:
+        cell_ref (list): List of available cells
+        ele_index (int): The index of the element we wish to modify
+        visited_cells (list): List of previously visited/ modified cells
+        stack (list): Stack memory of our maze
+        wall_color (str, optional): The color you want to set the cell. Defaults to 'black'.
+    """
+    
+    paint_color(cells[ele_index],wall_color)
+    visited_cells.append(cells[ele_index])
+    stack.append(cells[ele_index])
+
+
+    def exit_pathway_clearing(maze_height: int,maze_width: int,cell_size: int, exits_ref: list, borders_ref: list):
+        """
+        Generates the indexes of the cells around the exit of our maze
+        Which can be used to dictate the placement of obstacles around
+        the maze entrances
+
+        Args:
+            maze_height (int): The height of maze
+            maze_width (int): The width of the maze
+            cell_size (int): The size of a single cell/wall
+            exits_ref (list): a list of exit/entrance cell's indexes
+            borders_ref (list): A list of all the border cell's indexes
+
+        Returns:
+            list : A list of all the indexes of the cells around the exits
+        """
+        
+        # essentials
+        tmp,exit_entrances, entrance_path = [], [], []
+        
+        # generating pathway indexes
+        for index in exits_ref:
+            tmp +=neighboring_cell(maze_height,maze_width,cell_size,index)
+        exit_entrances = [index for index in tmp if index not in borders_ref]
+        
+        for index in exit_entrances:
+            entrance_path +=neighboring_cell(maze_height,maze_width,cell_size,index)
+        entrance_path = [index for index in entrance_path if index not in exit_entrances]
+
+        pathway_index = exit_entrances + entrance_path
+        return pathway_index
+        
+
 def make_maze(maze_height: int | int = 200 , maze_width: int | int = 100, cell_size: int | int = 5 , color: str | str = 'white' ):
     """
     The main maze function, creates the maze for you
@@ -230,21 +282,73 @@ def make_maze(maze_height: int | int = 200 , maze_width: int | int = 100, cell_s
 
     # initialization phase
     draw_maze_border(maze_height,maze_width)
-    current_cell = 0
     cells = generate_maze(maze_height,maze_width,cell_size)
-    center_of_maze = maze_center(cells,cell_size)
+    current_cell = random.randint(0, len(cells) -1)
+    # calculating the maximum amount of cell our grid can hold
+    max_cell = maze_height / cell_size * maze_width / cell_size
 
     # creating essentials
     stack, visited_cells, walls = [], [], []
 
+    # creating exits and spawn spot
+    center_of_maze = maze_center(cells,cell_size)
+    exits, border_walls = maze_exits(cells)
+    
+    
+    
+    def exit_pathway_clearing(maze_height: int,maze_width: int,cell_size: int, exits_ref: list, borders_ref: list):
+        """
+        Generates the indexes of the cells around the exit of our maze
+        Which can be used to dictate the placement of obstacles around
+        the maze entrances
 
-    paint_color(cells[current_cell],'red')
-    visited_cells.append(cells[current_cell])
-    stack.append(cells[current_cell])
+        Args:
+            maze_height (int): The height of maze
+            maze_width (int): The width of the maze
+            cell_size (int): The size of a single cell/wall
+            exits_ref (list): a list of exit/entrance cell's indexes
+            borders_ref (list): A list of all the border cell's indexes
+
+        Returns:
+            list : A list of all the indexes of the cells around the exits
+        """
+        
+        # essentials
+        tmp,exit_entrances, entrance_path = [], [], []
+        
+        # generating pathway indexes
+        for index in exits_ref:
+            tmp +=neighboring_cell(maze_height,maze_width,cell_size,index)
+        exit_entrances = [index for index in tmp if index not in border_walls]
+        
+        for index in exit_entrances:
+            entrance_path +=neighboring_cell(maze_height,maze_width,cell_size,index)
+        entrance_path = [index for index in entrance_path if index not in exit_entrances]
+
+        pathway_index = exit_entrances + entrance_path
+        return pathway_index
+        
+
+    
+       
+    for wall in border_walls:
+        if wall not in exits:
+            paint_color(cells[wall],'black')
+        else:
+            paint_color(cells[wall],'Pink')
+        visited_cells.append(cells[wall])
+        stack.append(cells[wall])
+        
+        
+    for cell in center_of_maze:
+        cell_design(cells,cell,visited_cells,stack,'Pink')
+
+        
+    # starting maze generation sequence
+    cell_design(cells,wall,visited_cells,stack,'Pink')
     moved = True
-
-    # calculating the maximum amount of cell our grid can hold
-    max_cell = maze_height / cell_size * maze_width / cell_size
+            
+        
     while len(visited_cells) != max_cell:
 
         if moved:
@@ -261,33 +365,27 @@ def make_maze(maze_height: int | int = 200 , maze_width: int | int = 100, cell_s
             moved = True
 
 
-
         # moving, then painting the cell we in
         if not cells[neighbors_index] in visited_cells:
-            # painting the cell that we are on red
-            paint_color(cells[neighbors_index],color)
-
-            # Then we are appending it to both visited and stack
-            visited_cells.append(cells[neighbors_index])
-            stack.append(cells[neighbors_index])
+            
+            # First we change the color of the cell then we are appending
+            # it to both visited and stack list. (All done in the cell_design func)
+            cell_design(cells,neighbors_index,visited_cells,stack,color)
 
             # This section is what creates/draws our walls
-            # The wall is made from a randomly chosen neighbor that was not visited
-
             try:
 
                 while True:
+                    # The wall is made from a randomly chosen neighbor that was not visited
                     wall = random.choice(neighbors)
-                    if cells[wall] in visited_cells:
+                    if cells[wall] in visited_cells or cells[wall] in exits:
                         neighbors.pop(neighbors.index(wall))
                     else:
                         break
 
                 if not cells[wall] in walls:
-                    visited_cells.append(cells[wall])
-                    stack.append(cells[wall])
+                    cell_design(cells,wall,visited_cells,stack)
                     walls.append(cells[wall])
-                    paint_color(cells[wall],'black')
                     moved = True
 
                 current_cell = neighbors_index
@@ -295,10 +393,9 @@ def make_maze(maze_height: int | int = 200 , maze_width: int | int = 100, cell_s
                 current_cell = stack_control(cells,stack)
                 moved = True
 
-    # removing obstacles from the center of the maze
-    #fix this
-    center_index = [walls.index(cells[cell]) and paint_color(cells[cell],color) for cell in center_of_maze if cells[cell] in walls ]
-    [walls.pop(wall) for wall in center_index if not wall == None]
+
+    # center_index = [walls.index(cells[cell]) and paint_color(cells[cell],color) for cell in center_of_maze if cells[cell] in walls ]
+    # [walls.pop(wall) for wall in center_index if not wall == None]
 
     print('maze done')
     return
@@ -328,7 +425,7 @@ def maze_center(cell_ref: int, cell_size: int):
     return maze_center
 
 
-def maze_exits(cells_ref:  list) -> tuple:
+def maze_exits(cells_ref:  list):
     """
     Generates the outside walls/barriers of our maze
     Then assigns an exit to the maze on each side of the maze
@@ -350,7 +447,7 @@ def maze_exits(cells_ref:  list) -> tuple:
     bottom_walls = [f for f in range(0,len(cells_ref),f)]
 
     # combining all the generated index data
-    border_walls = left_walls + right_walls + top_walls + bottom_walls
+    border_walls = left_walls  + top_walls + right_walls + bottom_walls
 
     # filtering out and removing the corner walls
     for index in border_walls:
@@ -393,9 +490,9 @@ if __name__ == '__main__':
     import random
     # turtle.getscreen()
     # turtle.getscreen().tracer(0)
-    h = 400
-    w = 200
-    cs = 50
+    h = 400 + 40
+    w = 200 + 40
+    cs = 20
     cc = 8
 
     f = int(h / cs)
@@ -404,22 +501,20 @@ if __name__ == '__main__':
 
     # calculating center of the maze
     # block 1
-    # generate_maze(h,w,cs)
+    generate_maze(h,w,cs)
     cells= generate_cells(h,w,cs)
-    c = maze_center(cells,cs)
-
+    # c = maze_center(cells,cs)
+    
+    # draw_maze_border(h,w)
     make_maze(h,w,cs)
     # c = maze_center(cells,cs)
+    # a, b = maze_exits(cells)
+    a,c = maze_exits(cells)
+    # for i in a:
+        # paint_color(cells[i],'red')
 
-    a, b = maze_exits(cells)
-    
-    for i in b:
-        
-        if i not in a:
-            paint_color(cells[i],'red')
-
-    for z in c:
-        paint_color(cells[z],'green')
+    # for z in c:
+        # paint_color(cells[z],'black')
 
     turtle.Turtle('turtle')
 
