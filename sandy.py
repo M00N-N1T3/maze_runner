@@ -6,6 +6,7 @@ from maze import obstacles
 
 gui_loader = sys.argv
 gui_loader = [word.lower() for word in gui_loader]
+gui_loader.append('turtle')
 if 'turtle' in gui_loader:
     import turtle
 
@@ -292,8 +293,9 @@ def robot_start():
 
     # generating the turtle
     gui_loader = sys.argv
-    gui_loader = [word.lower() for word in gui_loader] #converting inputs to lower chars
 
+    gui_loader = [word.lower() for word in gui_loader] #converting inputs to lower chars
+    gui_loader.append('turtle')
     if 'turtle' in gui_loader:
         turtle_variable = turtle.Turtle('turtle')
         turtle_variable.color('brown','red')
@@ -304,7 +306,7 @@ def robot_start():
     robot_name = name_robot()
     greet_user(robot_name)
     # creating the obstacles
-    obstacle = sandbox.generate_cells(200,100,10)
+    obstacle = sandbox.generate_cells(400,200,50)
     # obstacle = obstacles.generate_obstacles()
     if len(obstacle) > 0:
         world.show_obstacles(obstacle)
