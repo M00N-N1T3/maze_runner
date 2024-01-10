@@ -2,8 +2,7 @@ from sys import argv
 from maze import obstacles
 gui_loader = argv
 gui_loader = [word.lower() for word in gui_loader]
-gui_loader.append('turtle')
-gui_loader.append('maze')
+
 
 if 'turtle' in gui_loader:
     import turtle

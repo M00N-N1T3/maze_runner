@@ -3,7 +3,6 @@ from sys import argv
 
 gui_loader = argv
 gui_loader = [word.lower() for word in gui_loader]
-gui_loader.append('turtle')
 if 'turtle' in gui_loader:
     import turtle
 
@@ -74,20 +73,25 @@ def draw_obstacles(obstacles: list|tuple,maze_height: int or int = 210 , maze_wi
 
 
     # drawing the obstacles
-    turtle.Turtle()
-    turtle.hideturtle()
+    drawer = turtle.Turtle()
+    drawer.hideturtle()
+    turtle.tracer(0)
+    
 
     for obstacle in obstacles:
         x,y = obstacle[0]
-        turtle.penup()
-        turtle.goto(x,y)
-        turtle.begin_fill()
-        turtle.pen(pendown=True,fillcolor=color,speed=0)
+        drawer.penup()
+        drawer.goto(x,y)
+        drawer.begin_fill()
+        drawer.pen(pendown=False,fillcolor=color,speed=0)
         for co in reversed(obstacle):
-            turtle.goto(co)
-        turtle.end_fill()
+            drawer.goto(co)
+        drawer.end_fill()
 
+    turtle.tracer(1)
     return obstacles
+
+
 def is_path_blocked(position1: tuple,position2: tuple,obstacles: list) -> bool:
     """
     Checks whether the path from point A to point B is blocked by an obstacle

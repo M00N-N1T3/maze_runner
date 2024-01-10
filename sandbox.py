@@ -528,8 +528,8 @@ def draw_obstacle(cell: list|tuple, color: str):
     # starting coordinates for the cell color fill
     x1,y1 = cell[0]
 
-    # turtle.tracer(0)
-    # turtle.hideturtle()
+    turtle.tracer(0)
+    turtle.hideturtle()
     turtle.penup()
     turtle.goto(int(x1),int(y1))
     turtle.pen(pendown=True,fillcolor=color,pensize=0,pencolor=color,speed=0)
@@ -540,7 +540,7 @@ def draw_obstacle(cell: list|tuple, color: str):
     turtle.goto(int(x1),int(y1))
     turtle.end_fill()
 
-    # turtle.tracer(1)
+    turtle.tracer(1)
     return
 
 
