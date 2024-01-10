@@ -288,7 +288,7 @@ def main_logic(robot_name,turtle_variable,obstacle):
 
 
 def robot_start():
-    import sandbox
+    # import sandbox as obstacles
     """This is the entry function, do not change"""
 
     # generating the turtle
@@ -296,22 +296,26 @@ def robot_start():
 
     gui_loader = [word.lower() for word in gui_loader] #converting inputs to lower chars
     gui_loader.append('turtle')
+
+    robot_name = 'test'
+    # robot_name = name_robot()
+    greet_user(robot_name)
+    # creating the obstacles
+    # obstacle = sandbox.make_maze(400,200,10)
+    # obstacle = obstacles.generate_obstacles()
+    obstacle = obstacles.generate_obstacles()
+    if len(obstacle) > 0:
+        obs = world.show_obstacles(obstacle)
+       
     if 'turtle' in gui_loader:
         turtle_variable = turtle.Turtle('turtle')
         turtle_variable.color('brown','red')
         turtle_variable.setheading(90)
+        turtle_variable.penup()
     else:
         turtle_variable = None
 
-    robot_name = name_robot()
-    greet_user(robot_name)
-    # creating the obstacles
-    obstacle = sandbox.generate_cells(400,200,50)
-    # obstacle = obstacles.generate_obstacles()
-    if len(obstacle) > 0:
-        world.show_obstacles(obstacle)
-
-    main_logic(robot_name,turtle_variable,obstacle)
+    main_logic(robot_name,turtle_variable,obs)
     pass
 
 

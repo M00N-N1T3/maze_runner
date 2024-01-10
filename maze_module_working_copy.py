@@ -1,10 +1,10 @@
-# sandbox is where i code and test my logic
+#  imports
 import turtle, random
 from math import modf
 
 
 # full function
-def make_maze(maze_height: int or int = 200, maze_width: int or int = 100, cell_size: int or int = 5 , color: str or str = 'white' ):
+def make_maze(maze_height: int | int = 210 , maze_width: int | int = 110, cell_size: int | int = 5 , color: str | str = 'white' ):
     """
     The main maze function, creates the maze for you
 
@@ -39,9 +39,9 @@ def make_maze(maze_height: int or int = 200, maze_width: int or int = 100, cell_
        
     for wall in border_walls:
         if wall not in exits:
-            draw_obstacle(cells[wall],'black')
+            paint_color(cells[wall],'black')
         else:
-            draw_obstacle(cells[wall],'Pink')
+            paint_color(cells[wall],'Pink')
         visited_cells.append(cells[wall])
         stack.append(cells[wall])
         
@@ -118,97 +118,12 @@ def generate_maze(height: int, width: int, cell_size: int):
         list: A list of all the available cell coordinates
     """
     turtle.tracer(0)
-    cells = generate_obstacles(height,width,cell_size)
+    draw_maze_border(height,width)
+    cells = generate_cells(height,width,cell_size)
     turtle.tracer(1)
 
     return cells
 
-def draw_obstacles(obstacles: list|tuple,maze_height: int or int = 210 , maze_width: int or int = 110, cell_size: int or int = 5 , color: str or str = 'white' ):
-    
-    cells = obstacles
-    current_cell = random.randint(0, len(cells) -1)
-    # calculating the maximum amount of cell our grid can hold
-    max_cell = maze_height / cell_size * maze_width / cell_size
-
-    # creating essentials
-    stack, visited_cells, walls = [], [], []
-
-    # creating exits and spawn spot
-    center_of_maze = maze_center(cells,cell_size)
-    exits, border_walls = maze_exits(cells,maze_height,cell_size)
-    entrance_path = clearing_exit_pathway(maze_height,maze_width,cell_size,exits,border_walls)
-    
-        
-
-    for wall in entrance_path:
-        cell_design(cells,wall,visited_cells,stack,color)
-       
-    for wall in border_walls:
-        if wall not in exits:
-            draw_obstacle(cells[wall],'black')
-        else:
-            draw_obstacle(cells[wall],'Pink')
-        visited_cells.append(cells[wall])
-        stack.append(cells[wall])
-        
-        
-    for cell in center_of_maze:
-        cell_design(cells,cell,visited_cells,stack,'Pink')
-
-        
-    # starting maze generation sequence and initialization
-    cell_design(cells,wall,visited_cells,stack,)
-    moved = True
-            
-        
-    while len(visited_cells) != max_cell:
-
-        if moved:
-            neighbors = neighboring_cell(maze_height,maze_width,cell_size,current_cell)
-            moved = False
-
-        if len(neighbors) != 0:
-            neighbors_index = random.choice(neighbors)
-            neighbors.pop(neighbors.index(neighbors_index))
-
-        # checking if we have already visited any neighbors
-        if cells[neighbors_index] in visited_cells and len(neighbors) == 0:#count == num_of_neighbors:
-            current_cell =  stack_control(cells,stack)
-            moved = True
-
-
-        # moving, then painting the cell we in
-        if not cells[neighbors_index] in visited_cells:
-            
-            # First we change the color of the cell then we are appending
-            # it to both visited and stack list. (All done in the cell_design func)
-            cell_design(cells,neighbors_index,visited_cells,stack,color)
-
-            # This section is what creates/draws our walls
-            try:
-
-                while True:
-                    # The wall is made from a randomly chosen neighbor that was not visited
-                    wall = random.choice(neighbors)
-                    if cells[wall] in visited_cells or cells[wall] in exits:
-                        neighbors.pop(neighbors.index(wall))
-                    else:
-                        break
-
-                if not cells[wall] in walls:
-                    cell_design(cells,wall,visited_cells,stack)
-                    walls.append(cells[wall])
-                    moved = True
-
-                current_cell = neighbors_index
-                
-            except IndexError:
-                current_cell = stack_control(cells,stack)
-                moved = True
-
-    # walls is a list of all our obstacles
-
-    return walls
 
 # stack control
 def stack_control(cells: list,stack: list):
@@ -237,9 +152,9 @@ def stack_control(cells: list,stack: list):
 
 
 # cell / wall functions
-def create_obstacle(xcord: int, ycord: int, cell_size: int):
+def square(xcord: int, ycord: int, cell_size: int):
     """
-    Draws a single cell unit / obstacle.
+    Draws a single cell unit.
     One cell is a square of size cell_size * cell_size
     E.g if cell_size = 2, the size of the square/cell will be 2 by 2 (2h * 2w)
 
@@ -252,20 +167,27 @@ def create_obstacle(xcord: int, ycord: int, cell_size: int):
         tuple: A tuple of the coordinates of the cells edges(corners)
     """
 
+    turtle.hideturtle()
+    # turtle.teleport(xcord,ycord) | only works on pyhton3 v 10.12
+    turtle.penup()
+    turtle.goto(xcord,ycord)
+    turtle.pen(pendown=False,speed=0)
+    turtle.begin_poly()
+    turtle.goto(xcord + cell_size,ycord)
+    turtle.goto(xcord + cell_size,ycord + cell_size)
+    turtle.goto(xcord,ycord + cell_size)
+    turtle.goto(xcord,ycord)
+    turtle.end_poly()
 
-    obstacle = list()
-    
-
-    obstacle.append((xcord + cell_size,ycord))
-    obstacle.append((xcord + cell_size,ycord + cell_size))
-    obstacle.append((xcord,ycord + cell_size))
-    obstacle.append((xcord,ycord))
+    # saving the created cell coordinates
+    cell = list(turtle.get_poly())
+    cell.pop(4)
 
 
-    return tuple(obstacle)
+    return tuple(cell)
 
 
-def generate_obstacles(height: int,width: int,cell_size: int):
+def generate_cells(height: int,width: int,cell_size: int):
     """
     Generates and fills the maze with cells of a specified cell s_size
 
@@ -282,17 +204,17 @@ def generate_obstacles(height: int,width: int,cell_size: int):
     height,width = height / 2, width / 2
     height,width = int(height), int(width)
 
-    obstacle_ref = []
+    cell_ref = []
     # width is the values on our x-axis on the cartesian plain
     for x in range(-width, width, cell_size):
 
         # height is the values on our x-axis on the cartesian plain
         for y in range(-height + cell_size, height + cell_size, cell_size):
             # generating a single cell at a time then adding to a list of references
-            cell = create_obstacle(x ,y - cell_size,cell_size)
-            obstacle_ref.append(cell)
+            cell = square(x ,y - cell_size,cell_size)
+            cell_ref.append(cell)
 
-    return obstacle_ref
+    return cell_ref
 
 
 def neighboring_cell(height: int,width: int,cell_size: int,current_cell_index: int):
@@ -352,7 +274,7 @@ def neighboring_cell(height: int,width: int,cell_size: int,current_cell_index: i
 
 # maze functions
 
-def draw_maze_border(height = 200 or int, width = 100 or int):
+def draw_maze_border(height: int,width: int):
     """Draws the outside walls of our maze (borders)
 
     Args:
@@ -512,12 +434,12 @@ def cell_design(cells_ref: list, ele_index: int, visited_cells: list, stack: lis
         wall_color (str, optional): The color you want to set the cell. Defaults to 'black'.
     """
     
-    draw_obstacle(cells_ref[ele_index],wall_color)
+    paint_color(cells_ref[ele_index],wall_color)
     visited_cells.append(cells_ref[ele_index])
     stack.append(cells_ref[ele_index])
 
 
-def draw_obstacle(cell: list|tuple, color: str):
+def paint_color(cell: list|tuple, color: list):
     """
     Fills in the color of the obstacles/path
 
@@ -528,173 +450,18 @@ def draw_obstacle(cell: list|tuple, color: str):
     # starting coordinates for the cell color fill
     x1,y1 = cell[0]
 
-    # turtle.tracer(0)
-    # turtle.hideturtle()
+    turtle.tracer(0)
+    turtle.hideturtle()
     turtle.penup()
     turtle.goto(int(x1),int(y1))
-    turtle.pen(pendown=True,fillcolor=color,pensize=0,pencolor=color,speed=0)
+    turtle.pen(pendown=False,fillcolor=color,pensize=0,pencolor=color,speed=0)
     turtle.begin_fill()
-    for cord in cell:
+    for cord in cell[1:]:
         x,y = cord
         turtle.goto(int(x),int(y))
     turtle.goto(int(x1),int(y1))
     turtle.end_fill()
 
-    # turtle.tracer(1)
+    turtle.tracer(1)
     return
-
-
-def is_path_blocked(position1: tuple,position2: tuple,obstacles: list) -> bool:
-    """
-    Checks whether the path from point A to point B is blocked by an obstacle
-    Example : if the robot wants to move from (10,19) to (14,19), we will check
-    whether there is an obstacle in that path, which restrict movement
-
-    Args:
-        position1 (tuple): A tuple of the (x,y) coordinates that the robot is at (where it is standing)
-        position2 (tuple): A tuple of the (x,y) coordinates that the robot will end up at if it moves
-        obstacles (list): A list containing all the obstacles in the world
-
-    Returns:
-        bool : True if there is an object in the path  / False if there is no object in the path
-    """
-    # point 1 = (x,y)       point 2 = (x+4,y)
-    #         |---------------------|
-    # (x1,y1) | pretend its 5 x 5   | (x2,y2)
-    #         |---------------------|
-    # point 4 = (x,y+4)     point 3 = (x+4,y+4)
-
-    x1,y1= position1
-    x2,y2 = position2
-
-
-    # bug add command check here 
-    # if back, all + must be -
-    if x1 == x2:
-        step = -1 if y2 < y1 else 1
-        for y in range(y1,y2+step,step):
-            if is_position_blocked(x1,y,obstacles):
-                return True
-    elif y1 == y2:
-        step = -1 if x2 < x1 else 1
-        for x in range(x1,x2+step,step):
-            if is_position_blocked(x,y1,obstacles):
-                return True
-
-    return False
-
-
-def is_position_blocked(x,y,obstacles: list) -> bool:
-    """
-    Checks whether there is an obstacle in the position that the robot
-    wants to move to, before it moves the robot
-    Example : if the robot wants to move to (10,19), we will check
-    if there is any object at position (10,19)
-
-    Args:
-        position (tuple): A tuple of the (x,y) coordinates that want the robot ot move to
-
-        obstacles (list): A list containing all the obstacles in the world
-
-    Returns:
-        bool : True if there is an object in  / False if there is no object that position
-    """
-    # point 1 = (x,y)       point 2 = (x+4,y)
-    #         |---------------------|
-    #         | pretend its 5 x 5   |
-    #         |---------------------|
-    # point 4 = (x,y+4)     point 3 = (x+4,y+4)
-
-    # line 1: x to x+4
-    # line 2: y to y+4
-    # line 3: x to x+4
-    # line 2: y to y+4
-
-    for obstacle in obstacles:
-        x1,y1 = obstacle[0]
-        if (x in range(x1,x1+5) and y in range(y1,y1+5)):
-            return True
-
-
-    return False
-
-
-def path_forecast(command:list, x:int ,y:int,degree: int) -> tuple:
-
-    """Predicts the robots next positional coordinates
-    if it was to move from its current position to its next position
-
-    Args:
-        degree (int): The direction the robot is facing in degrees
-        command (list): The command given to the robot
-        x (int): The current number of steps on the x-axis
-        y (int): The current number of steps on the y-axis
-
-    Returns:
-        tuple : A forecast of what the robot's new coordinations will be
-    """   
-    steps = int(command[1])
-
-    # Before we do anything we are always checking which direction the robot is facing then which command is being given to the robot
-    if degree == 0:
-        # Based off the command that is being given to the robot we return an int value of the sum of the the robots current_steps_on(x/y) + number_of_steps_to_take
-        if "Forward" in command or "Sprint" in command:
-            x = x + steps
-        elif "Back" in command:
-            x = x - steps
-
-    elif degree == 90 or degree == -270:
-        if "Forward" in command or "Sprint" in command:
-            y = y + steps
-        elif "Back" in command:
-            y = y - steps
-
-    elif degree == 180 or degree == -180:
-        if "Forward" in command or "Sprint" in command:
-            x = x - steps
-        elif "Back" in command:
-            x = x + steps
-
-    elif degree == 270 or degree == -90:
-        if "Forward" in command or "Sprint" in command:
-            y = y - steps
-        elif "Back" in command:
-            y = y + steps
-    
-    return (x,y)
-
-
-if __name__ == '__main__':
-
-    import random
-    # turtle.getscreen()
-    # turtle.getscreen().tracer(0)
-    h = 220
-    w = 120
-    cs = 10
-    cc = 8
-
-    # f = int(h / cs)
-    # max_cells = int( h/cs * w /cs)
-    screen = turtle.getscreen()
-
-
-    make_maze(h,w,cs)
-    # c = maze_center(cells,cs)
-    # a, b = maze_exits(cells)
-    # a,c = maze_exits(cells)
-    # for i in a:
-        # paint_color(cells[i],'red')
-
-    # for z in c:
-        # paint_color(cells[z],'black')
-
-    turtle.Turtle('turtle')
-
-    
-    print('maze done')
-    screen.mainloop()
-
-
-    turtle.getscreen().mainloop()
 

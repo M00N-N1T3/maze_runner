@@ -3,12 +3,13 @@ from sys import argv
 
 gui_loader = argv
 gui_loader = [word.lower() for word in gui_loader]
+gui_loader.append('turtle')
 if 'turtle' in gui_loader:
     import turtle
 
 # creating obstacles
 # in the text world, the obstacle is a tuple containing 4 tuple elements
-def create_obstacle() -> bool:
+def create_obstacle(xcord = 100 or int, ycord = 200 or int, cell_size = 5 or int) -> tuple:
     """
     creates the obstacles within our world
     The obstacle is a 5 by 5 square.
@@ -24,25 +25,26 @@ def create_obstacle() -> bool:
     #         |---------------------|
     # point 4 = (x,y+4)     point 3 = (x+4,y+4)
     
-    x = random.randint(-100,100)
-    y = random.randint(-200,201)
-    
-    # ensuring that neither x or y is = 0, as that is our spawn point
-    if x == 0 or y == 0:
-        x = random.randint(-100,100)
-        y = random.randint(-200,201)
-    
+    # temporary list to store an obstacle
     obstacle = list()
     
+    # # ensuring that neither x or y is = 0, as that is our spawn point
+    while True:
+        xcord = random.randint(-xcord,xcord)
+        ycord = random.randint(-ycord,ycord)
+        if xcord != 0 and ycord != 0:
+            break
+    
+    
     # creating our 5 by 5 square 
-    obstacle.append((x,y))
-    obstacle.append((x+4,y))
-    obstacle.append((x+4,y+4))
-    obstacle.append((x,y+4))
+    obstacle.append((xcord+cell_size,ycord))
+    obstacle.append((xcord+cell_size,ycord+cell_size))
+    obstacle.append((xcord,ycord+cell_size))
+    obstacle.append((xcord,ycord))
 
     return tuple(obstacle)
 
-def generate_obstacles():
+def generate_obstacles(height = 200 or int, width = 100 or int, cell_size = 5 or int):
     """
     Generates a  list of obstacles
     each obstacle is a tuple with a set of 4 tuples containing (x,y) coordinates
@@ -51,16 +53,19 @@ def generate_obstacles():
     Returns:
         list : a list of all the available obstacles in the world
     """
-    
-    obstacles = [create_obstacle() for i in range (random.randint(0,10))]
+    # see if this is simple or mad man maze to be fair I think its simple
+    obstacles = [create_obstacle(width,height,cell_size) for i in range (random.randint(0,10))]
     return obstacles
 
-def draw_obstacles(obstacles):
+def draw_obstacles(obstacles: list|tuple,maze_height: int or int = 210 , maze_width: int or int = 110, cell_size: int or int = 5 , color: str or str = 'white' ):
     """
     Draws a visual representation of the obstacles within the turtle realm
 
     Args:
         obstacles (list): a list containing the coordinates of the obstacles
+        
+    Returns:
+        list: A list of all the obstacles drawn
     """
     # if the user does not give us a list of the coordinates of the obstacles
     # we randomly generate one fo them
@@ -69,19 +74,20 @@ def draw_obstacles(obstacles):
 
 
     # drawing the obstacles
-    ob = turtle.Turtle()
-    ob.hideturtle()
+    turtle.Turtle()
+    turtle.hideturtle()
 
     for obstacle in obstacles:
-        ob.penup()
-        ob.goto(obstacle[0])
-        ob.begin_fill()
-        ob.pen(pendown=True,fillcolor='black',speed=1000)
+        x,y = obstacle[0]
+        turtle.penup()
+        turtle.goto(x,y)
+        turtle.begin_fill()
+        turtle.pen(pendown=True,fillcolor=color,speed=0)
         for co in reversed(obstacle):
-            ob.goto(co)
-        ob.end_fill()
+            turtle.goto(co)
+        turtle.end_fill()
 
-
+    return obstacles
 def is_path_blocked(position1: tuple,position2: tuple,obstacles: list) -> bool:
     """
     Checks whether the path from point A to point B is blocked by an obstacle

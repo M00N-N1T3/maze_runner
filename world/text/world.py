@@ -19,7 +19,7 @@ def position_tracker(robot_name: str,coordinates: tuple,turtle_variable: object)
     return
 
 # border patrol
-def borders(command: list, degree: int, x: int, y: int,turtle_variable):
+def borders(command: list, degree: int, x: int, y: int,turtle_variable: object, maze_height = 200 or int, maze_width = 100 or int):
     """Sets a border and restricts how far the robot can actually in move a direction
 
     Args:
@@ -32,8 +32,8 @@ def borders(command: list, degree: int, x: int, y: int,turtle_variable):
         bool: a True or False signal on whether the robot should move or not
     """
 
-    x_border, y_border = 100, 200
-    neg_x_border, neg_y_border = -100, -200
+    x_border, y_border = maze_width, maze_height
+    neg_x_border, neg_y_border = -maze_width, -maze_height
 
     # initially the limit reached switch is false and if it remains false then the robot shall proceed in the desired direction
     limit_reached = False
@@ -170,7 +170,7 @@ def orientation_filter(degree: int):
 
 
 
-def show_obstacles(obstacles: list):
+def show_obstacles(obstacle_ref: list,maze_height = 200 or int , maze_width = 100 or int, cell_size = 5 or int, color = None):
     """
     Hints to the user the coordinates of all
     the available obstacles in the world if any
@@ -178,13 +178,17 @@ def show_obstacles(obstacles: list):
     Args:
         obstacles (list): a list of the available obstacles
         turtle_variable (object): Draws the obstacles in the world
+        
+    Returns:
+        list: A list of all the obstacle sin the world 
     """
 
     print('There are some obstacles:')
-    for obstacle in obstacles:
+    for obstacle in obstacle_ref:
         x,y = obstacle[0]
-        print(f'- At position {x},{y} (to {x+4},{y+4})')
-    return
+        print(f'- At position {x},{y} (to {x+cell_size},{y+cell_size})')
+    
+    return obstacle_ref
 
 
 def is_blocked(robot_name: str,coordinates: tuple,obstacles_ref: list,command: list):
