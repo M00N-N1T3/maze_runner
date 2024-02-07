@@ -19,7 +19,7 @@ def position_tracker(robot_name: str,coordinates: tuple,turtle_variable: object)
     return
 
 # border patrol
-def borders(command: list, degree: int, x: int, y: int,turtle_variable: object, maze_height = 200 or int, maze_width = 100 or int):
+def borders(command: list, degree: int, x: int, y: int,turtle_variable: object, maze_height: int = 200, maze_width: int = 100):
     """Sets a border and restricts how far the robot can actually in move a direction
 
     Args:
@@ -124,7 +124,7 @@ def safe_zone_warning(robot_name: str):
     return (f"{robot_name}: Sorry, I cannot go outside my safe zone.")
 
 # orientation logic (turning)
-def direction_facing(degree: int, orientation: str,turtle_variable):
+def direction_facing(degree: int, orientation: str,turtle_variable = None):
     """Controls the direction the robot faces by adjusting the degrees accordingly
 
     Args:
@@ -170,7 +170,7 @@ def orientation_filter(degree: int):
 
 
 
-def show_obstacles(obstacle_ref: list,maze_height = 200 or int , maze_width = 100 or int, cell_size = 5 or int, color = None):
+def show_obstacles(obstacle_ref: list,cell_size: int = 4):
     """
     Hints to the user the coordinates of all
     the available obstacles in the world if any
@@ -186,7 +186,7 @@ def show_obstacles(obstacle_ref: list,maze_height = 200 or int , maze_width = 10
     print('There are some obstacles:')
     for obstacle in obstacle_ref:
         x,y = obstacle[0]
-        print(f'- At position {x},{y} (to {x+cell_size},{y+cell_size})')
+        print(f'- At position {x},{y} (to {x + cell_size},{y + cell_size})')
     
     return obstacle_ref
 

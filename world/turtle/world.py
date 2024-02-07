@@ -1,9 +1,10 @@
 from sys import argv
-from maze import obstacles
+# from maze import obstacles
+import sandbox as obstacles
 gui_loader = argv
 gui_loader = [word.lower() for word in gui_loader]
-
-
+gui_loader.append('turtle')
+unit = 1.5
 if 'turtle' in gui_loader:
     import turtle
     # import sandbox as obstacles
@@ -55,7 +56,7 @@ def position_tracker(robot_name: str,coordinates: tuple,turtle_variable: object)
 
 
     # The position the turtle must move to
-    turtle_variable.goto(x,y)
+    turtle_variable.goto(x*unit,y*unit)
     print(f" > {robot_name} now at position ({x},{y}).")
     return
 
@@ -72,27 +73,28 @@ def draw_borders(maze_height = 200 or int, maze_width = 100 or int):
     
     # border settings
     border = turtle.Turtle()
+
     border.hideturtle()
     border.pen(pendown=False,pensize=3,speed=1000)
 
     # point at which we want to start drawing the boundary lines
-    border.goto(maze_width,-maze_height)
+    border.goto(maze_width * unit,-maze_height* unit)
     border.pendown()
 
     # drawing the right wall on the x-axis
-    border.goto(maze_width,maze_height)
+    border.goto(maze_width* unit,maze_height* unit)
     
     # drawing the top wall on the y-axis
-    border.goto(-maze_width,maze_height)
+    border.goto(-maze_width*unit,maze_height* unit)
     
     # drawing the top wall on the y-axis
-    border.goto(-maze_width,-maze_height)
+    border.goto(-maze_width* unit,-maze_height*unit)
 
     # drawing the bottom wall on the y-axis
-    border.goto(maze_width,-maze_height)
+    border.goto(maze_width*unit,-maze_height*unit)
 
 # border patrol
-def borders(command: list, degree: int,x: int,y: int,turtle_variable: object,maze_height = 200 or int, maze_width = 100 or int):
+def borders(command: list, degree: int,x: int,y: int,turtle_variable: object,maze_height: int = 200, maze_width: int = 100):
     """Sets a border and restricts how far the robot can actually in move a direction
 
     Args:
@@ -107,8 +109,8 @@ def borders(command: list, degree: int,x: int,y: int,turtle_variable: object,maz
     position,degree,message = world_pos_tracker("",turtle_variable)
     x,y = position
     
-    x_border, y_border = maze_width, maze_height
-    neg_x_border, neg_y_border = -maze_width, -maze_height
+    x_border, y_border = maze_width * unit, maze_height * unit
+    neg_x_border, neg_y_border = -maze_width * unit, -maze_height * unit
 
     # initially the limit reached switch is false and if it remains false then the robot shall proceed in the desired direction
     limit_reached = False
@@ -256,7 +258,7 @@ def orientation_filter(degree: int):
     return degree
 
 
-def show_obstacles(obstacle_ref: list,maze_height = 200 or int, maze_width = 100 or int, cell_size  = 5 or int, color = 'black' or str):
+def show_obstacles(obstacle_ref: list, cell_size: int = 4):
     """
     Hints to the user the coordinates of all
     the available obstacles in the world if any
@@ -264,19 +266,19 @@ def show_obstacles(obstacle_ref: list,maze_height = 200 or int, maze_width = 100
     Args:
         obstacles_ref (list): a list of the available obstacles
         turtle_variable (object): Draws the obstacles in the world
-    
+
     Returns:
         list : A list containing all the obstacles available in the world
     """
 
     # drawing the obstacle in the world
-    obstacle_list = obstacles.draw_obstacles(obstacle_ref,maze_height,maze_width,cell_size,color)
+    # obstacle_list = obstacles.draw_obstacles(obstacle_ref,maze_height,maze_width,cell_size,color)
     print('There are some obstacles:')
-    for obstacle in obstacle_list:
+    for obstacle in obstacle_ref:
         x,y = obstacle[0]
         print(f'- At position {x},{y} (to {x+cell_size},{y+cell_size})')
-        
-    return obstacle_list
+
+    return obstacle_ref
 
 
 def is_blocked(robot_name: str,coordinates: tuple,obstacles_ref: list,command: list):

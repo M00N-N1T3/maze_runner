@@ -8,6 +8,8 @@ import import_helper
 # Initializer, loaded text or graphical version
 gui_loader = sys.argv
 gui_loader = [word.lower() for word in gui_loader]
+gui_loader.append('turtle')
+gui_loader.append('garden_of_eden')
 
 
 
@@ -321,8 +323,8 @@ def robot_start():
     # import sandbox as obstacles
     """This is the entry function, do not change"""
 
-    # robot_name = 'test'
-    robot_name = name_robot()
+    robot_name = 'test'
+    # robot_name = name_robot()
     greet_user(robot_name)
     
     # importing specified maze
