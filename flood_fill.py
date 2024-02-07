@@ -46,7 +46,7 @@ def hunt_north(current_cell: int|float , cells_ref: list,paths_dict: dict, visit
         if 'up' in paths_dict.keys() and paths_dict['up'] != None and cells_ref[int(paths_dict['up'])] not in occupied_cells:
             current_cell = paths_dict['up']
             visited.append(cells_ref[current_cell])
-            return
+            return True, current_cell
         
     if current_cell in target_row:
         if current_cell < cells_ref.index(target):
@@ -54,64 +54,64 @@ def hunt_north(current_cell: int|float , cells_ref: list,paths_dict: dict, visit
             if 'right' in paths_dict.keys() and paths_dict['right'] != None and cells_ref[int(paths_dict['right'])] not in occupied_cells:
                 current_cell = paths_dict['right']
                 visited.append(cells_ref[current_cell])
-                return
+                return True, current_cell
             
             if 'left' in paths_dict.keys() and paths_dict['left'] != None and cells_ref[int(paths_dict['left'])] not in occupied_cells:
                 current_cell = paths_dict['left']
                 visited.append(cells_ref[current_cell])
-                return
+                return True, current_cell
         else:
             
             if 'left' in paths_dict.keys() and paths_dict['left'] != None and cells_ref[int(paths_dict['left'])] not in occupied_cells:
                 current_cell = paths_dict['left']
                 visited.append(cells_ref[current_cell])
-                return
+                return True, current_cell
             
             if 'right' in paths_dict.keys() and paths_dict['right'] != None and cells_ref[int(paths_dict['right'])] not in occupied_cells:
                 current_cell = paths_dict['right']
                 visited.append(cells_ref[current_cell])
-                return
+                return True, current_cell
 
     
     
     if 'up' in paths_dict.keys() and paths_dict['up'] != None and cells_ref[int(paths_dict['up'])] not in occupied_cells:
         current_cell = paths_dict['up']
         visited.append(cells_ref[current_cell])
-        return
+        return True, current_cell
     
     if current_cell < cells_ref.index(target):
     
         if 'right' in paths_dict.keys() and paths_dict['right'] != None and cells_ref[int(paths_dict['right'])] not in occupied_cells:
             current_cell = paths_dict['right']
             visited.append(cells_ref[current_cell])
-            return
+            return True, current_cell
         
         if 'left' in paths_dict.keys() and paths_dict['left'] != None and cells_ref[int(paths_dict['left'])] not in occupied_cells:
             current_cell = paths_dict['left']
             visited.append(cells_ref[current_cell])
-            return  
+            return  True 
     else:
         
         if 'left' in paths_dict.keys() and paths_dict['left'] != None and cells_ref[int(paths_dict['left'])] not in occupied_cells:
             current_cell = paths_dict['left']
             visited.append(cells_ref[current_cell])
-            return
+            return True, current_cell
         
         if 'right' in paths_dict.keys() and paths_dict['right'] != None and cells_ref[int(paths_dict['right'])] not in occupied_cells:
             current_cell = paths_dict['right']
             visited.append(cells_ref[current_cell])
-            return
+            return True, current_cell
         
 
     if 'down' in paths_dict.keys() and paths_dict['down'] != None and cells_ref[int(paths_dict['down'])] not in occupied_cells:
         current_cell = paths_dict['down']
         visited.append(cells_ref[current_cell])
-        return
+        return True, current_cell
     
     # if len(paths_dict) == 1 and cells_ref[int(paths_dict['up'])] not in occupied_cells:
     #     current_cell = paths_dict[key]
     #     visited.append(cells_ref[current_cell])
-    #     return
+    return False, current_cell
     
     
     

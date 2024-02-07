@@ -212,42 +212,49 @@ if __name__ == '__main__':
             draw_obstacle(cells[i],'green')
             obs.append(cells[i])
         
+    moved = True
     for i in range(0,25):
         
-        draw_obstacle(cells[cc],'brown')
+        if moved == True:
+            draw_obstacle(cells[cc],'brown')
+        else:
+            cc = stack.pop(0)    
         nb, dic = neighboring_cell(h*2,w*2,cs,cc)
 
 
-        # registering our surrounding (r= 0, l= 1, up=2 , down=3)
-        num_of_paths = 0
+        # # registering our surrounding (r= 0, l= 1, up=2 , down=3)
+        # num_of_paths = 0
         
 
-        tmp = dict()
-        for key, value in dic.items():    # stack control
-            n = dic[key] 
+        # tmp = dict()
+        # for key, value in dic.items():    # stack control
+        #     n = dic[key] 
 
-            if n != None:
+        #     if n != None:
             
-                if cells[int(n)] in obs:
-                    print(f'This is an obs: {dic[key]}')
-                    # we will ignore it if it is a wall
+        #         if cells[int(n)] in obs:
+        #             print(f'This is an obs: {dic[key]}')
+        #             # we will ignore it if it is a wall
                 
-                elif cells[int(n)] not in visit and cells[int(n)] not in obs:
-                    print(f'This is a path: {n}')
-                    tmp[key]= int(n)
-                    num_of_paths += 1
+        #         elif cells[int(n)] not in visit and cells[int(n)] not in obs:
+        #             print(f'This is a path: {n}')
+        #             tmp[key]= int(n)
+        #             num_of_paths += 1
                     
-                    # if this cell has more than one path, we add it to stack right
-                    if num_of_paths > 1:
-                        stack.append(int(cc))
-                        print(f'added to stack: {n}')
+        #             # if this cell has more than one path, we add it to stack right
+        #             if num_of_paths > 1:
+        #                 stack.append(int(cc))
+        #                 print(f'added to stack: {n}')
 
-        
+        from flood_fill import stack_control
+        stack_it , paths = stack_control(cells,dic,visit,obs)
+        if stack_it:
+            stack.append(int(cc))
         # the column that cc is in
         
         
                 
-        for key, values in tmp.items():
+        for key, values in paths.items():
             
             occupied_cells = list()
             occupied_cells.extend(visit)
@@ -256,80 +263,90 @@ if __name__ == '__main__':
                
             if hunt == 'north':
             
-                if cc in end_column:
-                    # if 'up' in tmp.keys() and tmp['up'] != None and cells[int(tmp['up'])] not in visit and  cells[int(tmp['up'])] not in obs:
-                    if 'up' in tmp.keys() and tmp['up'] != None and cells[int(tmp['up'])] not in occupied_cells:
-                        cc = tmp['up']
-                        visit.append(cells[cc])
-                        break
+                # if cc in end_column:
+                #     # if 'up' in paths.keys() and paths['up'] != None and cells[int(paths['up'])] not in visit and  cells[int(paths['up'])] not in obs:
+                #     if 'up' in paths.keys() and paths['up'] != None and cells[int(paths['up'])] not in occupied_cells:
+                #         cc = paths['up']
+                #         visit.append(cells[cc])
+                #         break
                     
-                if cc in end_row:
-                    if cc < cells.index(end):
+                # if cc in end_row:
+                #     if cc < cells.index(end):
                         
-                        if 'right' in tmp.keys() and tmp['right'] != None and cells[int(tmp['right'])] not in occupied_cells:
-                            cc = tmp['right']
-                            visit.append(cells[cc])
-                            break
+                #         if 'right' in paths.keys() and paths['right'] != None and cells[int(paths['right'])] not in occupied_cells:
+                #             cc = paths['right']
+                #             visit.append(cells[cc])
+                #             break
                         
-                        if 'left' in tmp.keys() and tmp['left'] != None and cells[int(tmp['left'])] not in occupied_cells:
-                            cc = tmp['left']
-                            visit.append(cells[cc])
-                            break  
-                    else:
+                #         if 'left' in paths.keys() and paths['left'] != None and cells[int(paths['left'])] not in occupied_cells:
+                #             cc = paths['left']
+                #             visit.append(cells[cc])
+                #             break  
+                #     else:
                         
-                        if 'left' in tmp.keys() and tmp['left'] != None and cells[int(tmp['left'])] not in occupied_cells:
-                            cc = tmp['left']
-                            visit.append(cells[cc])
-                            break
+                #         if 'left' in paths.keys() and paths['left'] != None and cells[int(paths['left'])] not in occupied_cells:
+                #             cc = paths['left']
+                #             visit.append(cells[cc])
+                #             break
                         
-                        if 'right' in tmp.keys() and tmp['right'] != None and cells[int(tmp['right'])] not in occupied_cells:
-                            cc = tmp['right']
-                            visit.append(cells[cc])
-                            break
+                #         if 'right' in paths.keys() and paths['right'] != None and cells[int(paths['right'])] not in occupied_cells:
+                #             cc = paths['right']
+                #             visit.append(cells[cc])
+                #             break
             
 
                 
                 
-                if 'up' in tmp.keys() and tmp['up'] != None and cells[int(tmp['up'])] not in occupied_cells:
-                    cc = tmp['up']
-                    visit.append(cells[cc])
-                    break
+                # if 'up' in paths.keys() and paths['up'] != None and cells[int(paths['up'])] not in occupied_cells:
+                #     cc = paths['up']
+                #     visit.append(cells[cc])
+                #     break
                 
-                if cc < cells.index(end):
+                # if cc < cells.index(end):
                 
-                    if 'right' in tmp.keys() and tmp['right'] != None and cells[int(tmp['right'])] not in occupied_cells:
-                        cc = tmp['right']
-                        visit.append(cells[cc])
-                        break
+                #     if 'right' in paths.keys() and paths['right'] != None and cells[int(paths['right'])] not in occupied_cells:
+                #         cc = paths['right']
+                #         visit.append(cells[cc])
+                #         break
                     
-                    if 'left' in tmp.keys() and tmp['left'] != None and cells[int(tmp['left'])] not in occupied_cells:
-                        cc = tmp['left']
-                        visit.append(cells[cc])
-                        break  
+                #     if 'left' in paths.keys() and paths['left'] != None and cells[int(paths['left'])] not in occupied_cells:
+                #         cc = paths['left']
+                #         visit.append(cells[cc])
+                #         break  
+                # else:
+                    
+                #     if 'left' in paths.keys() and paths['left'] != None and cells[int(paths['left'])] not in occupied_cells:
+                #         cc = paths['left']
+                #         visit.append(cells[cc])
+                #         break
+                    
+                #     if 'right' in paths.keys() and paths['right'] != None and cells[int(paths['right'])] not in occupied_cells:
+                #         cc = paths['right']
+                #         visit.append(cells[cc])
+                #         break
+                    
+
+                # if 'down' in paths.keys() and paths['down'] != None and cells[int(paths['down'])] not in occupied_cells:
+                #     cc = paths['down']
+                #     visit.append(cells[cc])
+                #     break
+                from flood_fill import hunt_north
+                
+                # if len(paths) == 1 and cells[int(paths['up'])] not in occupied_cells:
+                #     cc = paths[key]
+                #     visit.append(cells[cc])
+                #     break
+                # else:
+                works, new_cc =  hunt_north(cc,cells,paths,visit,occupied_cells,end,end_column,end_row)
+                if works:    
+                    moved = True
+                    cc = new_cc
+                    break
                 else:
-                    
-                    if 'left' in tmp.keys() and tmp['left'] != None and cells[int(tmp['left'])] not in occupied_cells:
-                        cc = tmp['left']
-                        visit.append(cells[cc])
-                        break
-                    
-                    if 'right' in tmp.keys() and tmp['right'] != None and cells[int(tmp['right'])] not in occupied_cells:
-                        cc = tmp['right']
-                        visit.append(cells[cc])
-                        break
-                    
-
-                if 'down' in tmp.keys() and tmp['down'] != None and cells[int(tmp['down'])] not in occupied_cells:
-                    cc = tmp['down']
-                    visit.append(cells[cc])
-                    break
-                
-                if len(tmp) == 1 and cells[int(tmp['up'])] not in occupied_cells:
-                    cc = tmp[key]
-                    visit.append(cells[cc])
-                    break
-            
-            if len(tmp) ==0:
+                    print('see it')
+                    moved = True
+                    cc = stack.pop(0) 
+            if len(paths) ==0:
                 cc = stack.pop(0) 
 
 
