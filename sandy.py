@@ -113,7 +113,7 @@ def draw_obstacle(cell: list|tuple, color: str):
         
     x1,y1 = cell[0]
 
-    turtle.tracer(0)
+    # turtle.tracer(0)
     turtle.hideturtle()
     turtle.penup()
     turtle.goto(int(x1),int(y1))
@@ -125,7 +125,7 @@ def draw_obstacle(cell: list|tuple, color: str):
     turtle.goto(int(x1),int(y1))
     turtle.end_fill()
 
-    turtle.tracer(1)
+    # turtle.tracer(1)
     return
 
 
@@ -133,7 +133,8 @@ def draw_obstacle(cell: list|tuple, color: str):
 
 if __name__ == '__main__':
     
-    hunt = 'north'
+    # hunt = 'north'
+    hunt = 'south'
     h, w, cs = int(200*1.5), int(100*1.5), int(50)
     turtle.getscreen()
     
@@ -170,19 +171,16 @@ if __name__ == '__main__':
     if len(test) == len(obs):
         print('success')
         
-    cc  = 0
+    cc  = 11
     path.append(cells[cc])
     visit.append(cells[cc])
-    # ns = neighboring_cell(h*2,w*2,cs,cc)
-    # ns = list(reversed(ns))
-    # draw_obstacle(cells[cc],'red')
-    # for n in ns:
-    #     draw_obstacle(cells[n],'blue')
-    
+
     moved = False
     
-    draw_obstacle(cells[71],'pink')
-    end = cells[71]
+    draw_obstacle(cells[36],'pink')
+    end = cells[36]
+    # draw_obstacle(cells[71],'pink')
+    # end = cells[71]
     end_index = cells.index(end)
 
     end_column = [column  for column in columns if end_index in column][0]
@@ -196,15 +194,19 @@ if __name__ == '__main__':
     for i in range(0, len(cells)-1,7):
         if i in end_row:
             continue
+        if i == 11:
+            continue
+        if i == 35:
+            continue
         if i != 0:
             draw_obstacle(cells[i],'green')
             obs.append(cells[i])
             
     for i in range(12, 25):
         
-        if i == 15:
+        if i == 15 :
             continue
-        if i in end_row:
+        if i in [11,23,35,47,59]:
             continue
 
         
@@ -213,10 +215,16 @@ if __name__ == '__main__':
             obs.append(cells[i])
         
     moved = True
-    for i in range(0,25):
+    # while True:
+    for i in range(0,30):
+        
         
         if moved == True:
             draw_obstacle(cells[cc],'brown')
+            if cells[cc] == end:
+                print("Winner")
+                break
+            moved = False
         else:
             cc = stack.pop(0)    
         nb, dic = neighboring_cell(h*2,w*2,cs,cc)
@@ -252,8 +260,7 @@ if __name__ == '__main__':
             stack.append(int(cc))
         # the column that cc is in
         
-        
-                
+ 
         for key, values in paths.items():
             
             occupied_cells = list()
@@ -261,155 +268,116 @@ if __name__ == '__main__':
             occupied_cells.extend(obs)
                
                
-            if hunt == 'north':
+            if hunt == 'south':
             
-                # if cc in end_column:
-                #     # if 'up' in paths.keys() and paths['up'] != None and cells[int(paths['up'])] not in visit and  cells[int(paths['up'])] not in obs:
-                #     if 'up' in paths.keys() and paths['up'] != None and cells[int(paths['up'])] not in occupied_cells:
-                #         cc = paths['up']
-                #         visit.append(cells[cc])
-                #         break
+                if cc in end_column:
+                    # if 'up' in paths.keys() and paths['up'] != None and cells[int(paths['up'])] not in visit and  cells[int(paths['up'])] not in obs:
+                    if 'down' in paths.keys() and paths['down'] != None and cells[int(paths['down'])] not in occupied_cells:
+                        cc = paths['down']
+                        visit.append(cells[cc])
+                        moved = True
+                        break
                     
-                # if cc in end_row:
-                #     if cc < cells.index(end):
+                if cc in end_row:
+                    if cc < cells.index(end):
                         
-                #         if 'right' in paths.keys() and paths['right'] != None and cells[int(paths['right'])] not in occupied_cells:
-                #             cc = paths['right']
-                #             visit.append(cells[cc])
-                #             break
+                        if 'right' in paths.keys() and paths['right'] != None and cells[int(paths['right'])] not in occupied_cells:
+                            cc = paths['right']
+                            visit.append(cells[cc])
+                            moved = True
+                            break
                         
-                #         if 'left' in paths.keys() and paths['left'] != None and cells[int(paths['left'])] not in occupied_cells:
-                #             cc = paths['left']
-                #             visit.append(cells[cc])
-                #             break  
-                #     else:
+                        if 'left' in paths.keys() and paths['left'] != None and cells[int(paths['left'])] not in occupied_cells:
+                            cc = paths['left']
+                            visit.append(cells[cc])
+                            moved = True
+                            break  
+                    else:
                         
-                #         if 'left' in paths.keys() and paths['left'] != None and cells[int(paths['left'])] not in occupied_cells:
-                #             cc = paths['left']
-                #             visit.append(cells[cc])
-                #             break
+                        if 'left' in paths.keys() and paths['left'] != None and cells[int(paths['left'])] not in occupied_cells:
+                            cc = paths['left']
+                            visit.append(cells[cc])
+                            moved = True
+                            break
                         
-                #         if 'right' in paths.keys() and paths['right'] != None and cells[int(paths['right'])] not in occupied_cells:
-                #             cc = paths['right']
-                #             visit.append(cells[cc])
-                #             break
+                        if 'right' in paths.keys() and paths['right'] != None and cells[int(paths['right'])] not in occupied_cells:
+                            cc = paths['right']
+                            visit.append(cells[cc])
+                            moved = True
+                            break
             
 
                 
                 
-                # if 'up' in paths.keys() and paths['up'] != None and cells[int(paths['up'])] not in occupied_cells:
-                #     cc = paths['up']
-                #     visit.append(cells[cc])
-                #     break
+                if 'down' in paths.keys() and paths['down'] != None and cells[int(paths['down'])] not in occupied_cells:
+                    cc = paths['down']
+                    visit.append(cells[cc])
+                    moved = True
+                    break
                 
-                # if cc < cells.index(end):
+                if cc < cells.index(end):
                 
-                #     if 'right' in paths.keys() and paths['right'] != None and cells[int(paths['right'])] not in occupied_cells:
-                #         cc = paths['right']
-                #         visit.append(cells[cc])
-                #         break
+                    if 'right' in paths.keys() and paths['right'] != None and cells[int(paths['right'])] not in occupied_cells:
+                        cc = paths['right']
+                        visit.append(cells[cc])
+                        moved = True
+                        break
                     
-                #     if 'left' in paths.keys() and paths['left'] != None and cells[int(paths['left'])] not in occupied_cells:
-                #         cc = paths['left']
-                #         visit.append(cells[cc])
-                #         break  
-                # else:
+                    if 'left' in paths.keys() and paths['left'] != None and cells[int(paths['left'])] not in occupied_cells:
+                        cc = paths['left']
+                        visit.append(cells[cc])
+                        moved = True
+                        break  
+                else:
                     
-                #     if 'left' in paths.keys() and paths['left'] != None and cells[int(paths['left'])] not in occupied_cells:
-                #         cc = paths['left']
-                #         visit.append(cells[cc])
-                #         break
+                    if 'left' in paths.keys() and paths['left'] != None and cells[int(paths['left'])] not in occupied_cells:
+                        cc = paths['left']
+                        visit.append(cells[cc])
+                        moved = True
+                        break
                     
-                #     if 'right' in paths.keys() and paths['right'] != None and cells[int(paths['right'])] not in occupied_cells:
-                #         cc = paths['right']
-                #         visit.append(cells[cc])
-                #         break
+                    if 'right' in paths.keys() and paths['right'] != None and cells[int(paths['right'])] not in occupied_cells:
+                        cc = paths['right']
+                        visit.append(cells[cc])
+                        moved = True
+                        break
                     
 
-                # if 'down' in paths.keys() and paths['down'] != None and cells[int(paths['down'])] not in occupied_cells:
-                #     cc = paths['down']
-                #     visit.append(cells[cc])
-                #     break
-                from flood_fill import hunt_north
+                if 'up' in paths.keys() and paths['up'] != None and cells[int(paths['up'])] not in occupied_cells:
+                    cc = paths['up']
+                    visit.append(cells[cc])
+                    moved = True
+                    break
                 
-                # if len(paths) == 1 and cells[int(paths['up'])] not in occupied_cells:
+                # if len(paths) == 1 and cells[int(paths['down'])] not in occupied_cells:
                 #     cc = paths[key]
                 #     visit.append(cells[cc])
                 #     break
-                # else:
-                works, new_cc =  hunt_north(cc,cells,paths,visit,occupied_cells,end,end_column,end_row)
-                if works:    
-                    moved = True
-                    cc = new_cc
-                    break
                 else:
-                    print('see it')
+                
+                
+                
+                    print('the breaK')
+                
+                
+                
+                # from flood_fill import hunt_north
+                # works, new_cc =  hunt_north(cc,cells,paths,visit,occupied_cells,end,end_column,end_row)
+                # if works:    
+                #     moved = True
+                #     cc = new_cc
+                #     break
+ 
+                if len(paths) ==0:
+                    cc = stack.pop(0)
                     moved = True
-                    cc = stack.pop(0) 
-            if len(paths) ==0:
-                cc = stack.pop(0) 
+                    break 
 
 
      
                     
 
-        #             if cells[b] not in visit and b > cells.index(end) and b != cc - 1:
-        #                 cc = b
-        #                 print('should move')
-        #                 visit.append(cells[cc])
-        #                 breaking = True
-        #                 break
-                    
-                    
-        #             # if cells[b] not in visit and cells[cc+f] in obs or  cells[cc+f] in visit:
-        #             #     cc = b
-        #             #     print('should move')
-        #             #     visit.append(cells[cc])
-        #             #     breaking = True
-        #             #     break
-                    
-                    
-                    
-        #             if cells[b] not in visit and (cc + f) == b:
-        #                 cc = b
-        #                 print('should move')
-        #                 visit.append(cells[cc])
-        #                 breaking = True
-        #                 break
-                
-        #         # the last edit was reversing the list
-                
-        #         # adding it to list of visited cells
-        # else:
-        #     cc = stack.pop(0)
-            
-                
-        # moving up to the new block
-        # if num_of_paths > 0:
-        #     nn = list(reversed(nb))
-        #     while ns != 0:
-        #         n = nn.pop(0)
-        #         if hunt == 'north':
-                    
-        #             # if we moving up, all we have to do is add 1
-        #             if n - cc == 1: 
-        #                 if cells[n - 1] not in visit and cells[n-1] not in obs:
-        #                     cc = n-1
-        #                     moved = True
-        #                     break
-                        
-        #             if len(nn) == 1:
-        #                 if cells[n] not in visit and cells[n] not in obs:
-        #                     cc = n
-        #         else:
-        #             continue
-        # else:
-        #     blocked = True    
-        
-    
-        
-        
-        pass 
+
         
     print('Execution done')
     turtle.mainloop()
