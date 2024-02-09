@@ -275,13 +275,13 @@ if __name__ == '__main__':
             
             
                 # The key is to navigate the map using columns and so on: 
-                if cc in end_column:
+                if cc_column_index in end_column:
                     if 'down' in paths.keys() and paths['down'] != None and cells[int(paths['down'])] not in occupied_cells:
                         cc = paths['down']
                         visit.append(cells[cc])
                         moved = True
                         break
-                    
+                    # check the row / index/  column 
                 
                 if cc_column_index < columns.index(end_column) or cc in visit:
                     
