@@ -143,17 +143,21 @@ if __name__ == '__main__':
     
     f = h / cs *2
     # list columns 
-    columns, tmp = [], []
+    # columns, tmp = [], []
 
-    for cell in cells:
-        tmp.append(cells.index(cell))
-        if len(tmp) == f:
-            columns.append(tmp)
-            tmp=[]
+    # for cell in cells:
+    #     tmp.append(cells.index(cell))
+    #     if len(tmp) == f:
+    #         columns.append(tmp)
+    #         tmp=[]
         
     # number of rows in a
-    rows = [[column[j] for column in columns] for j in range(len(columns[0]))]
-                
+    # rows = [[column[j] for column in columns] for j in range(len(columns[0]))]
+    
+    
+    from flood_fill import rows_and_columns
+    
+    columns, rows = rows_and_columns(cells,f)
     
     
     
@@ -171,20 +175,25 @@ if __name__ == '__main__':
     if len(test) == len(obs):
         print('success')
         
-    cc  = 11
+    cc  = 23
     path_taken.append(cells[cc])
     visit.append(cells[cc])
 
     moved = False
-    
-    draw_obstacle(cells[0],'pink')
-    end = cells[0]
+    e=0
+    draw_obstacle(cells[e],'pink')
+    end = cells[e]
     # draw_obstacle(cells[71],'pink')
     # end = cells[71]
-    end_index = cells.index(end)
+    
+    end_point_index = cells.index(end)
 
-    end_column = [column  for column in columns if end_index in column][0]
-    end_row = [row for row in rows if end_index in row][0]
+    from flood_fill import exit_columns, exit_rows
+    
+    # end_point_column_index = [column  for column in columns if end_point_index in column][0]
+    # end_point_row_index = [row for row in rows if end_point_index in row][0]
+    end_point_column_index = exit_columns(columns,cells,list(end))
+    end_point_row_index = exit_rows(rows,cells,list(end))
     
     moved = True   
     blocked = False
@@ -192,7 +201,7 @@ if __name__ == '__main__':
     
     # creating obs
     for i in range(0, len(cells)-1,7):
-        if i in end_row:
+        if i in end_point_row_index:
             continue
         if i == 11:
             continue
@@ -269,125 +278,191 @@ if __name__ == '__main__':
                     cc_row_index = rows.index(row)
                     break
                                                 
-               
+            index_of_cc = cc
                
             if hunt == 'south': 
             
-            
-                # The key is to navigate the map using columns and so on: 
-                if cc_column_index in end_column:
-                    if 'down' in paths.keys() and paths['down'] != None and cells[int(paths['down'])] not in occupied_cells:
-                        cc = paths['down']
-                        visit.append(cells[cc])
-                        moved = True
-                        break
-                    # check the row / index/  column 
+                # end index is the index of the exit
+                # The key is to navigate the map using columns and so on:
                 
-                if cc_column_index < columns.index(end_column) or cc in visit:
-                    
-                    if 'left' in paths.keys() and paths['left'] != None and cells[int(paths['left'])] not in occupied_cells:
-                        cc = paths['left']
-                        visit.append(cells[cc])
-                        moved = True
-                        break
-                    
-                        
-                if cc_column_index > columns.index(end_column):
-                    if 'right' in paths.keys() and paths['right'] != None and cells[int(paths['right'])] not in occupied_cells:
-                        cc = paths['right']
-                        visit.append(cells[cc])
-                        moved = True
-                        break
+                # we would then have to check the length from where we are to the column 
+                # the length of where we are to the row
                 
+                # for columns
+                # if where i am     <  less than where I want to be
+                if columns.index(end_point_column_index) < cc_column_index:
+                    # we have rows that contains how many rows we have in our grid
+                    distance_row = rows[cc_row_index] # the row that I am in and its values
+                    tmp = end_point_column_index    # the column that our target is in 
+                    
+                    for index_value in distance_row: 
+                        # if the said value is in our column, that means its the denominator
+                        if index_value in tmp: 
+                            # the denominator is the common value in both lists
+                            denominator = index_value
+                            break
+                        
+                    
+                    # this determines the distance to the bottom
+                    if denominator > end_point_index:
+                        start = end_point_column_index.index(end_point_index)
+                        stop = end_point_column_index.index(denominator)
+                        down_dis = len(end_point_column_index[start:stop])
+                    else:
+                        start = end_point_column_index.index(end_point_index)
+                        stop = end_point_column_index.index(denominator)
+                        down_dis = len(end_point_column_index[stop:start]) # counting in reverse
                     
                     
-                # if cc in end_row:
-                #     if cc < cells.index(end):
+                    # this determines the left right distance
+                    
+                    if denominator < cc:
+                        start = distance_row.index(denominator)
+                        stop = distance_row.index(cc)
+                        lat_dis = len(distance_row[start:stop])
+                    else:
+                        start = distance_row.index(denominator)
+                        stop = distance_row.index(cc)
+                        lat_dis = len(distance_row[stop:start])
                         
-                #         if 'right' in paths.keys() and paths['right'] != None and cells[int(paths['right'])] not in occupied_cells:
-                #             cc = paths['right']
-                #             visit.append(cells[cc])
-                #             moved = True
-                #             break
+                else:#columns.index(end_point_column_index) < cc_column_index:
+                    # we have rows that contains how many rows we have in our grid
+                    distance_row = rows[cc_row_index] # the row that I am in and its values
+                    tmp = end_point_column_index    # the column that our target is in 
+                    
+                    for index_value in distance_row: 
+                        # if the said value is in our column, that means its the denominator
+                        if index_value in tmp: 
+                            # the denominator is the common value in both lists
+                            denominator = index_value
+                            break
                         
-                #         if 'left' in paths.keys() and paths['left'] != None and cells[int(paths['left'])] not in occupied_cells:
-                #             cc = paths['left']
-                #             visit.append(cells[cc])
-                #             moved = True
-                #             break  
-                #     else:
+                    
+                    # this determines the distance to the bottom
+                    if denominator > end_point_index:
+                        start = end_point_column_index.index(end_point_index)
+                        stop = end_point_column_index.index(denominator)
+                        down_dis = len(end_point_column_index[start:stop])
+                    else:
+                        start = end_point_column_index.index(end_point_index)
+                        stop = end_point_column_index.index(denominator)
+                        down_dis = len(end_point_column_index[stop:start]) # counting in reverse
+                    
+                    
+                    # this determines the left right distance
+                    
+                    if denominator < cc:
+                        start = distance_row.index(denominator)
+                        stop = distance_row.index(cc)
+                        lat_dis = len(distance_row[start:stop])
+                    else:
+                        start = distance_row.index(denominator)
+                        stop = distance_row.index(cc)
+                        lat_dis = len(distance_row[stop:start])
                         
-                #         if 'left' in paths.keys() and paths['left'] != None and cells[int(paths['left'])] not in occupied_cells:
-                #             cc = paths['left']
-                #             visit.append(cells[cc])
-                #             moved = True
-                #             break
-                        
-                #         if 'right' in paths.keys() and paths['right'] != None and cells[int(paths['right'])] not in occupied_cells:
-                #             cc = paths['right']
-                #             visit.append(cells[cc])
-                #             moved = True
-                #             break
-            
+                
+                # the aim is to move towards the columns then move up and down based on the prioty 
+                # priority is determined by the lat distance vs the vertical distance
+                
+                # firstly  we want to move left o right till we rich the column that has our exit
+                horizontal_priority = None
+                vertical_priority = None
+                
+                if down_dis >= lat_dis and down_dis != 0:
+                    
+                    if cc_column_index > columns.index(end_point_column_index):
+                        vertical_priority = 'left'
+                        vertical_secondary = 'right'
+                    else:
+                        vertical_priority = 'right'
+                        vertical_secondary = 'left'   
 
-                
-                
-                # # if 'down' in paths.keys() and paths['down'] != None and cells[int(paths['down'])] not in occupied_cells:
-                # #     cc = paths['down']
-                # #     visit.append(cells[cc])
-                # #     moved = True
-                # #     break
-                
-                # if cc < cells.index(end):
-                
-                #     if 'right' in paths.keys() and paths['right'] != None and cells[int(paths['right'])] not in occupied_cells:
-                #         cc = paths['right']
-                #         visit.append(cells[cc])
-                #         moved = True
-                #         break
-                    
-                #     if 'left' in paths.keys() and paths['left'] != None and cells[int(paths['left'])] not in occupied_cells:
-                #         cc = paths['left']
-                #         visit.append(cells[cc])
-                #         moved = True
-                #         break  
-                # else:
-                    
-                #     if 'left' in paths.keys() and paths['left'] != None and cells[int(paths['left'])] not in occupied_cells:
-                #         cc = paths['left']
-                #         visit.append(cells[cc])
-                #         moved = True
-                #         break
-                    
-                #     if 'right' in paths.keys() and paths['right'] != None and cells[int(paths['right'])] not in occupied_cells:
-                #         cc = paths['right']
-                #         visit.append(cells[cc])
-                #         moved = True
-                #         break
-                    
-
-                # if 'up' in paths.keys() and paths['up'] != None and cells[int(paths['up'])] not in occupied_cells:
-                #     cc = paths['up']
-                #     visit.append(cells[cc])
-                #     moved = True
-                #     break
-                
-                # if len(paths) == 1 and cells[int(paths['down'])] not in occupied_cells:
-                #     cc = paths[key]
-                #     visit.append(cells[cc])
-                #     break
+                    if cc_row_index > rows.index(end_point_row_index):
+                        horizontal_priority = 'down'
+                        horizontal_secondary = 'up'
+                    else:
+                        horizontal_priority = 'up'
+                        horizontal_secondary = 'down'
                 else:
                 
+                    if cc_column_index > columns.index(end_point_column_index):
+
+                        vertical_priority = 'left'
+                        vertical_secondary = 'right'   
+
+                    else:
+                        vertical_priority = 'right'
+                        vertical_secondary = 'left'
+
+
+                    if cc_row_index >= rows.index(end_point_row_index):
+                        horizontal_priority = 'down'
+                        horizontal_secondary = 'up'
+
+                    else:
+
+                        horizontal_priority = 'up'
+                        horizontal_secondary = 'down'
+
+                    
+
+                 
                 
                 
-                    print('the breaK')
+                if columns.index(end_point_column_index) == cc_column_index:
+                     
+                    if horizontal_priority in paths.keys() and paths[horizontal_priority] != None and cells[int(paths[horizontal_priority])] not in occupied_cells:
+                        cc = paths[horizontal_priority]
+                        visit.append(cells[cc])
+                        # path.append(cells[cc])
+                        moved = True
+                        break 
+                    elif horizontal_priority in paths.keys() and paths[vertical_priority] != None and cells[int(paths[vertical_priority])] not in occupied_cells:
+                        cc = paths[vertical_priority]
+                        visit.append(cells[cc])
+                        moved = True
+                        break 
+                    elif horizontal_secondary in paths.keys() and paths[horizontal_secondary] != None and cells[int(paths[horizontal_secondary])] not in occupied_cells:
+                        cc = paths[horizontal_secondary]
+                        visit.append(cells[cc])
+                        moved = True
+                        break 
+                    elif vertical_secondary in paths.keys() and paths[vertical_secondary] != None and cells[int(paths[vertical_secondary])] not in occupied_cells:
+                        cc = paths[vertical_secondary]
+                        visit.append(cells[cc])
+                        moved = True
+                        break
+                        
+                        
+
+                else:
+                    
+    
+                    if horizontal_priority in paths.keys() and paths[horizontal_priority] != None and cells[int(paths[horizontal_priority])] not in occupied_cells:
+                        cc = paths[horizontal_priority]
+                        visit.append(cells[cc])
+                        moved = True
+                        break 
+                    elif vertical_priority in paths.keys() and paths[vertical_priority] != None and cells[int(paths[vertical_priority])] not in occupied_cells:
+                        cc = paths[vertical_priority]
+                        visit.append(cells[cc])
+                        moved = True
+                        break                         
+                    elif horizontal_secondary in paths.keys() and paths[horizontal_secondary] != None and cells[int(paths[horizontal_secondary])] not in occupied_cells:
+                        cc = paths[horizontal_secondary]
+                        visit.append(cells[cc])
+                        moved = True
+                        break 
+                    elif vertical_secondary in paths.keys() and paths[vertical_secondary] != None and cells[int(paths[vertical_secondary])] not in occupied_cells:
+                        cc = paths[vertical_secondary]
+                        visit.append(cells[cc])
+                        moved = True
+                        break
+                                                
+                    
+                    
                 
-                
-                
-                # if works:    
-                #     moved = True
-                #     cc = new_cc
-                #     break
+
  
                 if len(paths) ==0:
                     cc = stack.pop(0)
@@ -395,7 +470,7 @@ if __name__ == '__main__':
                     break 
             elif hunt == 'north':
                 from flood_fill import hunt_north
-                works, new_cc =  hunt_north(cc,cells,paths,visit,occupied_cells,end,end_column,end_row)
+                works, new_cc =  hunt_north(cc,cells,paths,visit,occupied_cells,end,end_point_column_index,end_point_row_index)
                 
 
 

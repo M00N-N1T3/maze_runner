@@ -114,88 +114,115 @@ def hunt_north(current_cell: int|float , cells_ref: list,paths_dict: dict, visit
     #     visited.append(cells_ref[current_cell])
     return False, current_cell
     
+
+def rows_and_columns(cells_ref: list|tuple, factor: int):
+    """
+    Determines the number of rows and columns within your maze gride.
+    Then splits it into separate list (rows and columns)
+    
+    The columns list contains nested lists, and each list contains cell indexes relevant to that column
+    The rows list also contains nested list, and each row list contains cell indexes relevant to that row
+
+    Args:
+        cells_ref (list | tuple): _description_
+        factor (int): _description_
+
+    Returns:
+        list : a list containing all the columns and its indexes 
+        list : a lits containing all the rows and its indexes
+    """
     
     
-def og():
-#             for key, values in paths.items():
-                
-#             occupied_cells = list()
-#             occupied_cells.extend(visit)
-#             occupied_cells.extend(obs)
-               
-               
-#             if hunt == 'north':
-            
-#                 if cc in end_column:
-#                     # if 'up' in paths.keys() and paths['up'] != None and cells[int(paths['up'])] not in visit and  cells[int(paths['up'])] not in obs:
-#                     if 'up' in paths.keys() and paths['up'] != None and cells[int(paths['up'])] not in occupied_cells:
-#                         cc = paths['up']
-#                         visit.append(cells[cc])
-#                         break
-                    
-#                 if cc in end_row:
-#                     if cc < cells.index(end):
-                        
-#                         if 'right' in paths.keys() and paths['right'] != None and cells[int(paths['right'])] not in occupied_cells:
-#                             cc = paths['right']
-#                             visit.append(cells[cc])
-#                             break
-                        
-#                         if 'left' in paths.keys() and paths['left'] != None and cells[int(paths['left'])] not in occupied_cells:
-#                             cc = paths['left']
-#                             visit.append(cells[cc])
-#                             break  
-#                     else:
-                        
-#                         if 'left' in paths.keys() and paths['left'] != None and cells[int(paths['left'])] not in occupied_cells:
-#                             cc = paths['left']
-#                             visit.append(cells[cc])
-#                             break
-                        
-#                         if 'right' in paths.keys() and paths['right'] != None and cells[int(paths['right'])] not in occupied_cells:
-#                             cc = paths['right']
-#                             visit.append(cells[cc])
-#                             break
-            
+    columns, tmp = [], []
 
-                
-                
-#                 if 'up' in paths.keys() and paths['up'] != None and cells[int(paths['up'])] not in occupied_cells:
-#                     cc = paths['up']
-#                     visit.append(cells[cc])
-#                     break
-                
-#                 if cc < cells.index(end):
-                
-#                     if 'right' in paths.keys() and paths['right'] != None and cells[int(paths['right'])] not in occupied_cells:
-#                         cc = paths['right']
-#                         visit.append(cells[cc])
-#                         break
-                    
-#                     if 'left' in paths.keys() and paths['left'] != None and cells[int(paths['left'])] not in occupied_cells:
-#                         cc = paths['left']
-#                         visit.append(cells[cc])
-#                         break  
-#                 else:
-                    
-#                     if 'left' in paths.keys() and paths['left'] != None and cells[int(paths['left'])] not in occupied_cells:
-#                         cc = paths['left']
-#                         visit.append(cells[cc])
-#                         break
-                    
-#                     if 'right' in paths.keys() and paths['right'] != None and cells[int(paths['right'])] not in occupied_cells:
-#                         cc = paths['right']
-#                         visit.append(cells[cc])
-#                         break
-                    
+    for cell in cells_ref:
+        tmp.append(cells_ref.index(cell))
+        if len(tmp) == factor:
+            columns.append(tmp)
+            tmp=[]
+    
+    rows = [[column[j] for column in columns] for j in range(len(columns[0]))]
+    
+    return columns, rows
 
-#                 if 'down' in paths.keys() and paths['down'] != None and cells[int(paths['down'])] not in occupied_cells:
-#                     cc = paths['down']
-#                     visit.append(cells[cc])
-#                     break
-                
-#                 if len(paths) == 1 and cells[int(paths['up'])] not in occupied_cells:
-#                     cc = paths[key]
-#                     visit.append(cells[cc])
-#                     break
-    pass
+
+def exit_columns(columns_ref: list|tuple, cells_ref: list|tuple, exits: list):
+    """
+    Returns the relevant columns that contains the maze exits
+
+    Args:
+        columns_ref (list | tuple): a list of of all the columns in the maze grid
+        cell_ref (list | tuple): a list of all the available cells in the maze grid
+        exits (list): a list of all th available exits
+    Returns:
+        list : a list of the column indexes that contains the exits points of the maze
+    """
+    
+    tmp = []
+    for exit in exits:
+        exit = cells_ref.index(exit)
+        exit_column_index = [column  for column in columns_ref if exit in column][0]
+        tmp.append(exit_column_index)
+        
+    return tmp
+
+def exit_rows(rows_ref: list|tuple, cells_ref: list|tuple, exits: list):
+    """
+    Returns the relevant rows that contains the maze exits
+
+    Args:
+        rows_ref (list | tuple): a list of of all the rows in the maze grid
+        cell_ref (list | tuple): a list of all the available cells in the maze grid
+        exits (list): a list of all th available exits
+    Returns:
+        list : a list of the rows indexes that contains the exits points of the maze
+    """
+    
+     
+    tmp = []
+    for exit in exits:
+        exit = cells_ref.index(exit)
+        exit_row_index = [row for row in rows_ref if exit in row][0]
+        tmp.append(exit_row_index)
+        
+    return tmp
+    
+    
+    
+
+
+ 
+# def target_distance():
+#     # we have rows that contains how many rows we have in our grid
+#     distance_row = rows[cc_row_index] # the row that I am in and its values
+#     tmp = end_point_column_index    # the column that our target is in 
+    
+#     for index_value in distance_row: 
+#         # if the said value is in our column, that means its the denominator
+#         if index_value in tmp: 
+#             # the denominator is the common value in both lists
+#             denominator = index_value
+#             break
+        
+    
+#     # this determines the distance to the bottom
+#     if denominator > end_point_index:
+#         start = end_point_column_index.index(end_point_index)
+#         stop = end_point_column_index.index(denominator)
+#         down_dis = len(end_point_column_index[start:stop])
+#     else:
+#         start = end_point_column_index.index(end_point_index)
+#         stop = end_point_column_index.index(denominator)
+#         down_dis = len(end_point_column_index[stop:start]) # counting in reverse
+    
+    
+#     # this determines the left right distance
+    
+#     if denominator < cc:
+#         start = distance_row.index(denominator)
+#         stop = distance_row.index(cc)
+#         lat_dis = len(distance_row[start:stop])
+#     else:
+#         start = distance_row.index(denominator)
+#         stop = distance_row.index(cc)
+#         lat_dis = len(distance_row[stop:start])

@@ -77,7 +77,7 @@ def generate_obstacles(maze_height: int = 200, maze_width: int = 100, cell_size:
     while len(visited_cells) != max_cell and count < len(visited_cells):
 
         if moved:
-            neighbors = neighboring_cell(maze_height,maze_width,cell_size,current_cell)
+            neighbors, paths = neighboring_cell(maze_height,maze_width,cell_size,current_cell)
             moved = False
 
         if len(neighbors) != 0:
@@ -248,12 +248,14 @@ def neighboring_cell(height: int,width: int,cell_size: int,current_cell_index: i
         list: a list of the available neighbors
     """
 
+    sides = dict()
+    
     # The total number of cells in the maze
     cells_total = height / cell_size * width / cell_size
     # The max number of cells we can fit in a single y-axis column is known as our factor value
     factor = height / cell_size # The factor value is the main dictator of how the maze is designed
     # bottom/top walls float values
-    wall_factor = modf(factor -1 / factor)[0]
+    wall_factor = format(modf(factor -1 / factor)[0],'.2f')
     # we get it by dividing 1 by factor, answer = n.wall_factor (7/8 = 0.125 | 125 = wall_factor)
 
     neighbors = []
@@ -265,29 +267,42 @@ def neighboring_cell(height: int,width: int,cell_size: int,current_cell_index: i
     # calculating the index of the neighboring cell to the right of the current cell
     right_neighbor = current_cell_index + factor
     neighbors.append(right_neighbor)
+    sides["right"] = right_neighbor
 
 
     # calculating the index of the neighboring cell to the left of the current cell
     left_neighbor = current_cell_index - factor
     neighbors.append(left_neighbor)
+    sides["left"] = left_neighbor
 
     # calculating the index of the neighboring cell to the top of the current cell
-    if modf(current_cell_index / factor)[0] != wall_factor:
+    if format(modf(current_cell_index / factor)[0],'.2f') != wall_factor:
         upside_neighbor = current_cell_index + 1
         neighbors.append(upside_neighbor)
+        sides['up'] = upside_neighbor
+    else:
+        sides['up'] = None
 
     # downside_neighbor = current_cell_index - 1
     # neighbors.append(downside_neighbor)
     if current_cell_index % factor != 0:
         downside_neighbor = current_cell_index - 1
         neighbors.append(downside_neighbor)
+        sides['down'] = downside_neighbor
+    else:
+        sides['down'] = None
 
     # filtering out values less than zero or values greater than number of cells
-    neighbors = [int(n) for n in neighbors if n < cells_total+1 and n > -1]
+    next = [int(n) for n in neighbors if n < cells_total+1 and n > -1]
     # filtering out the number n if n is == to the last index in the maze grid
-    neighbors = [int(n) for n in neighbors if n != cells_total]
+    now = [int(n) for n in next if n != cells_total]
+    
+    for keys, value in sides.items():
+        if value not in now:
+            sides[keys] = None
 
-    return neighbors
+
+    return now, sides
 
 # maze functions
 
@@ -423,11 +438,11 @@ def clearing_exit_pathway(maze_height: int,maze_width: int,cell_size: int, exits
     
     # generating pathway indexes
     for index in exits_ref:
-        tmp +=neighboring_cell(maze_height,maze_width,cell_size,index)
+        tmp , paths=neighboring_cell(maze_height,maze_width,cell_size,index)
     exit_entrances = [index for index in tmp if index not in borders_ref]
     
     for index in exit_entrances:
-        entrance_path +=neighboring_cell(maze_height,maze_width,cell_size,index)
+        entrance_path , paths =neighboring_cell(maze_height,maze_width,cell_size,index)
     entrance_path = [index for index in entrance_path if index not in exit_entrances]
 
     pathway_index = exit_entrances + entrance_path
