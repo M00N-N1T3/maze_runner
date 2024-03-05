@@ -175,7 +175,7 @@ def is_position_blocked(x,y,obstacles: list) -> bool:
 
     for obstacle in obstacles:
         x1,y1 = obstacle[0]
-        if (x in range(x1,x1+5) and y in range(y1,y1+5)):
+        if (x in range(x1,x1+4) and y in range(y1,y1+4)):
             return True
 
 

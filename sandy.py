@@ -142,17 +142,7 @@ if __name__ == '__main__':
     obs= []
     
     f = h / cs *2
-    # list columns 
-    # columns, tmp = [], []
 
-    # for cell in cells:
-    #     tmp.append(cells.index(cell))
-    #     if len(tmp) == f:
-    #         columns.append(tmp)
-    #         tmp=[]
-        
-    # number of rows in a
-    # rows = [[column[j] for column in columns] for j in range(len(columns[0]))]
     
     
     from flood_fill import rows_and_columns
@@ -176,7 +166,7 @@ if __name__ == '__main__':
         print('success')
         
     cc  = 60
-    path_taken.append(cells[cc])
+    
     visit.append(cells[cc])
 
     moved = False
@@ -228,103 +218,99 @@ if __name__ == '__main__':
             draw_obstacle(cells[i],'green')
             obs.append(cells[i])
         
-    moved = True
-    while True:
+
     # for i in range(0,30):
         
         
-        if moved == True:
-            draw_obstacle(cells[cc],'brown')
-            path_taken.append(cells[cc])
-            if cells[cc] == end:
-                print("Winner")
-                break
-            moved = False
-        else:
-            path_taken = list(reversed(path_taken))
-            cc = stack.pop()
+        # handles moving and popping from stack
+        # if moved == True:
+        #     draw_obstacle(cells[cc],'brown')
+        #     path_taken.append(cells[cc])
+        #     if cells[cc] == end:
+        #         print("Winner")
+        #         break
+        #     moved = False
+        # else:
+        #     rev_path_taken = list(reversed(path_taken))
+        #     cc = stack.pop()
             
-            for path in path_taken:
+        #     for path in rev_path_taken:
+        #         if cells[cc] == path:
+        #             break
+        #         draw_obstacle(path,'white')
+        #         del path_taken[path_taken.index(path)]
+        #     # path_taken = list(reversed(rev_path_taken))
                 
-                if cells[cc] == path:
-                    break
-                draw_obstacle(path,'white')
-            path_taken = list(reversed(path_taken))
-                
-        nb, dic = neighboring_cell(h*2,w*2,cs,cc)
+        # nb, dic = neighboring_cell(h*2,w*2,cs,cc)
 
 
-        from flood_fill import stack_control
-        stack_it , paths = stack_control(cells,dic,visit,obs)
-        if stack_it:
-            stack.append(int(cc))
+        # from flood_fill import stack_control
+        # stack_it , paths = stack_control(cells,dic,visit,obs)
+        # if stack_it:
+        #     stack.append(int(cc))
 
         
  
-        for key, values in paths.items():
+        # for key, values in paths.items():
             
-            occupied_cells = list()
-            occupied_cells.extend(visit)
-            occupied_cells.extend(obs)
+        #     occupied_cells = list()
+        #     occupied_cells.extend(visit)
+        #     occupied_cells.extend(obs)
 
             
-            from flood_fill import current_cell_position
-            cc_column_index, cc_row_index = current_cell_position(columns,rows, cc)
+        # from flood_fill import current_cell_position
+        # cc_column_index, cc_row_index = current_cell_position(columns,rows, cc)
             
                                                 
 
                
-            if hunt == 'south': 
+            # if hunt == 'south': 
 
+    from flood_fill import target_distance,path_finder, maze_runner
+    # cc , moved = path_finder(paths,cells,visit,obs,columns,rows,end_point_column_index,end_point_row_index,cc)
+    b = {"south":end_point_index}
+    path_taken = maze_runner(cells,b,obs,cc,visit,h,w,cs,"south")
+        
                         
-                from flood_fill import target_distance
+                # pass
                 
-                down_dis , lat_dis = target_distance(columns,rows,end_point_column_index,cc_row_index,end_point_index,cc)
+                # down_dis , lat_dis = target_distance(columns,rows,end_point_column_index,cc_row_index,end_point_index,cc)
                     
 
-                horizontal_priority = None
-                vertical_priority = None
+                # horizontal_priority = None
+                # vertical_priority = None
                 
                 
-                from flood_fill import set_priorities
+                # from flood_fill import set_priorities
                 
-                horizontal_priority, vertical_priority, horizontal_secondary,vertical_secondary = set_priorities(cc_column_index,cc_row_index,end_point_column_index,end_point_row_index)
+                # horizontal_priority, vertical_priority, horizontal_secondary,vertical_secondary = set_priorities(cc_column_index,cc_row_index,end_point_column_index,end_point_row_index)
                           
 
-                if horizontal_priority in paths.keys() and paths[horizontal_priority] != None and cells[int(paths[horizontal_priority])] not in occupied_cells:
-                    cc = paths[horizontal_priority]
-                    visit.append(cells[cc])
-                    moved = True
-                    break 
-                elif vertical_priority in paths.keys() and paths[vertical_priority] != None and cells[int(paths[vertical_priority])] not in occupied_cells:
-                    cc = paths[vertical_priority]
-                    visit.append(cells[cc])
-                    moved = True
-                    break                         
-                elif horizontal_secondary in paths.keys() and paths[horizontal_secondary] != None and cells[int(paths[horizontal_secondary])] not in occupied_cells:
-                    cc = paths[horizontal_secondary]
-                    visit.append(cells[cc])
-                    moved = True
-                    break 
-                elif vertical_secondary in paths.keys() and paths[vertical_secondary] != None and cells[int(paths[vertical_secondary])] not in occupied_cells:
-                    cc = paths[vertical_secondary]
-                    visit.append(cells[cc])
-                    moved = True
-                    break
-                                            
-                    
-                    
-                
-
- 
-                # if len(paths) ==0:
-                #     cc = stack.pop(0)
+                # if horizontal_priority in paths.keys() and paths[horizontal_priority] != None and cells[int(paths[horizontal_priority])] not in occupied_cells:
+                #     cc = paths[horizontal_priority]
+                #     visit.append(cells[cc])
                 #     moved = True
                 #     break 
-            elif hunt == 'north':
-                from flood_fill import hunt_north
-                works, new_cc =  hunt_north(cc,cells,paths,visit,occupied_cells,end,end_point_column_index,end_point_row_index)
-                
+                # elif vertical_priority in paths.keys() and paths[vertical_priority] != None and cells[int(paths[vertical_priority])] not in occupied_cells:
+                #     cc = paths[vertical_priority]
+                #     visit.append(cells[cc])
+                #     moved = True
+                #     break                         
+                # elif horizontal_secondary in paths.keys() and paths[horizontal_secondary] != None and cells[int(paths[horizontal_secondary])] not in occupied_cells:
+                #     cc = paths[horizontal_secondary]
+                #     visit.append(cells[cc])
+                #     moved = True
+                #     break 
+                # elif vertical_secondary in paths.keys() and paths[vertical_secondary] != None and cells[int(paths[vertical_secondary])] not in occupied_cells:
+                #     cc = paths[vertical_secondary]
+                #     visit.append(cells[cc])
+                #     moved = True
+                #     break
+
+        # elif hunt == 'north':
+        #     from flood_fill import hunt_north
+        #     # works, new_cc =  hunt_north(cc,cells,paths,visit,occupied_cells,end,end_point_column_index,end_point_row_index)
+        #     pass
 
 
      

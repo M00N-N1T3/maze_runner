@@ -1,6 +1,8 @@
 from sys import argv
 # from maze import obstacles
-import sandbox as obstacles
+# from maze import garden_of_eden as obstacles
+import obstacles
+
 gui_loader = argv
 gui_loader = [word.lower() for word in gui_loader]
 gui_loader.append('turtle')

@@ -21,7 +21,7 @@ gui_loader.append('turtle')
 unit = 1.5
 
 # full function
-def generate_obstacles(maze_height: int = 200, maze_width: int = 100, cell_size: int = 5 , color: str = 'white' ):
+def generate_obstacles(maze_height: int = 200, maze_width: int = 100, cell_size: int = 4 , color: str = 'white' ):
     """
     The main maze function, creates the maze for you
 
@@ -48,7 +48,7 @@ def generate_obstacles(maze_height: int = 200, maze_width: int = 100, cell_size:
 
     # creating exits and spawn spot
     center_of_maze = maze_center(cells,cell_size)
-    exits, border_walls = maze_exits(cells,maze_height,cell_size)
+    exit_ref, exits, border_walls = maze_exits(cells,maze_height,cell_size)
     entrance_path = clearing_exit_pathway(maze_height,maze_width,cell_size,exits,border_walls)
 
 
@@ -59,6 +59,8 @@ def generate_obstacles(maze_height: int = 200, maze_width: int = 100, cell_size:
     for wall in border_walls:
         if wall not in exits:
             draw_obstacle(cells[wall],'black','black')
+            walls.append(cells[wall])
+            
         else:
             draw_obstacle(cells[wall],'Pink','Pink')
         visited_cells.append(cells[wall])
@@ -120,7 +122,7 @@ def generate_obstacles(maze_height: int = 200, maze_width: int = 100, cell_size:
                 moved = True
 
     # walls is a list of all our obstacles
-    return walls
+    return walls, exit_ref, cells
 
 
 def generate_maze(height: int, width: int, cell_size: int):
@@ -374,6 +376,7 @@ def maze_exits(cells_ref: list, maze_height: int, cell_size: int):
     factor = int(maze_height / cell_size)
     # initialing temporary lists
     border_walls, filtering_corners, exits = [], [], []
+    exit_ref = dict()
 
     # retrieving the indexes of the specified walls
     left_walls = [cells_ref.index(cell) for cell in cells_ref[:factor]]
@@ -399,21 +402,25 @@ def maze_exits(cells_ref: list, maze_height: int, cell_size: int):
     left_exit = [index for index in left_walls if index in filtering_corners]
     exit_1 = random.choice(left_exit)
     exits.append(exit_1)
+    exit_ref["west"] = exit_1
 
     right_exit = [index for index in right_walls if index in filtering_corners]
     exit_2 = random.choice(right_exit)
     exits.append(exit_2)
+    exit_ref["east"] = exit_2
 
     top_exit = [index for index in top_walls if index in filtering_corners]
     exit_3 = random.choice(top_exit)
     exits.append(exit_3)
+    exit_ref["north"] = exit_3
 
     bottom_exit = [index for index in bottom_walls if index in filtering_corners]
     exit_4 = random.choice(bottom_exit)
     exits.append(exit_4)
+    exit_ref["south"] = exit_4
 
 
-    return exits, border_walls
+    return exit_ref, exits, border_walls
 
 
 def clearing_exit_pathway(maze_height: int,maze_width: int,cell_size: int, exits_ref: list, borders_ref: list):
@@ -438,11 +445,15 @@ def clearing_exit_pathway(maze_height: int,maze_width: int,cell_size: int, exits
     
     # generating pathway indexes
     for index in exits_ref:
-        tmp , paths=neighboring_cell(maze_height,maze_width,cell_size,index)
+        nc , paths=neighboring_cell(maze_height,maze_width,cell_size,index)
+        tmp.extend(nc)
+        # tmp.append(nc)
     exit_entrances = [index for index in tmp if index not in borders_ref]
     
     for index in exit_entrances:
-        entrance_path , paths =neighboring_cell(maze_height,maze_width,cell_size,index)
+        nc , paths =neighboring_cell(maze_height,maze_width,cell_size,index)
+        entrance_path.extend(nc)
+        
     entrance_path = [index for index in entrance_path if index not in exit_entrances]
 
     pathway_index = exit_entrances + entrance_path

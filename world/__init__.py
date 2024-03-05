@@ -3,7 +3,8 @@ import sys
 # capturing the terminal arguments, argv returns a list
 gui_loader = sys.argv
 gui_loader = [word.lower() for word in gui_loader]
-gui_loader.append('turtle')
+# gui_loader.append('turtle')
+# gui_loader.append('garden_of_eden')
 
 
 
