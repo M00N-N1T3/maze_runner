@@ -560,8 +560,8 @@ def maze_runner(cells_ref,exit_points, obstacle_ref,current_cell,visited_cells,h
 def find_cell(cell_ref,pos_x,pos_y,cell_size):
 
     for cell in cell_ref:
+        cords = cell[0]
         if pos_x in range(cords[0],cords[0]+cell_size) and pos_y in range(cords[1],cords[1]+cell_size):
-            cords = cell[0]
             cords_x = cords[0]+2
             cords_y = cords[1]+2
             
