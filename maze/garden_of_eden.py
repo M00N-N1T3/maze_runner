@@ -76,8 +76,13 @@ def generate_obstacles(maze_height: int = 200, maze_width: int = 100, cell_size:
     moved = True
 
     count = 0
+    i = 0
     while len(visited_cells) != max_cell and count < len(visited_cells):
-
+        
+        if i != max_cell * 10:
+            i+=1
+        else:
+            break
         if moved:
             neighbors, paths = neighboring_cell(maze_height,maze_width,cell_size,current_cell)
             moved = False

@@ -9,8 +9,8 @@ from flood_fill import maze_runner
 # Initializer, loaded text or graphical version
 gui_loader = sys.argv
 gui_loader = [word.lower() for word in gui_loader]
-# gui_loader.append('turtle')
-# gui_loader.append('garden_of_eden')
+gui_loader.append('turtle')
+gui_loader.append('garden_of_eden')
 
 
 if 'turtle' in gui_loader:
@@ -304,7 +304,7 @@ def main_logic(robot_name,turtle_variable,obstacle,exits,cells_ref,obstacles):
         elif "Mazerun" in command:
             cell = obstacles.create_obstacle(x,y,4)
             current_cell = cells_ref.index(cell)
-            path = maze_runner(cells_ref,exits,obstacle,current_cell,[],408,208,4,"south",turtle_variable)
+            path = maze_runner(cells_ref,exits,obstacle,current_cell,[],408,208,4,"south",turtle_variable,x,y,degree)
 
 
         elif "Replay" in command or (command.count("-") == 1):

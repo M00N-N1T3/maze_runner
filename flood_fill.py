@@ -2,6 +2,9 @@
 Progress 
 """
 from math import modf
+from world import world
+import mechanics
+import movement_logics
 
 def neighboring_cell(height: int,width: int,cell_size: int,current_cell_index: int):
     """
@@ -443,7 +446,7 @@ def path_finder(paths,cells_ref,visited_cells,obstacle_ref,columns_ref,rows_ref,
             break
 
             
-    return current_cell,moved, direction 
+    return current_cell,moved ,direction 
 
 def draw_obstacle(cell: list|tuple,turtle_variable, color1: str = None,color2: str = None):
     """
@@ -481,33 +484,34 @@ def draw_obstacle(cell: list|tuple,turtle_variable, color1: str = None,color2: s
 
 
 
-def maze_runner(cells_ref,exit_points, obstacle_ref,current_cell,visited_cells,height,width,cells_size,hunt,turtle_variable):
+def maze_runner(cells_ref,exit_points, obstacle_ref,current_cell,visited_cells,height,width,cells_size,hunt,turtle_variable,x,y,degree):
     
     # exit_point
     for key,value in exit_points.items():
         if hunt == key:
             exit = value
             break
+    
+    x,y = find_cell(cells_ref,x,y,cells_size)
 
     stack, visit ,path_taken= [],visited_cells,[]
-    
-    factor = height / cells_size 
-    
+
+    factor = height / cells_size
+
     columns, rows = rows_and_columns(cells_ref,factor)
     end_point_column_index = exit_columns(columns,[exit])[0]
     end_point_row_index = exit_rows(rows,[exit])[0]
 
-    # init    
-    moved = True   
+    # init
+    moved = True
 
-    
 
     while True:
 
-        
+
         # handles moving and popping from stack
         if moved == True:
-            draw_obstacle(cells_ref[current_cell],turtle_variable)
+            # draw_obstacle(cells_ref[current_cell],turtle_variable)
             path_taken.append(cells_ref[current_cell])
             if cells_ref[current_cell] == cells_ref[exit]:
                 # print("Winner")
@@ -516,23 +520,51 @@ def maze_runner(cells_ref,exit_points, obstacle_ref,current_cell,visited_cells,h
         else:
             rev_path_taken = list(reversed(path_taken))
             current_cell = stack.pop()
-            
+
             for path in rev_path_taken:
                 if cells_ref[current_cell] == path:
                     break
-                draw_obstacle(path,turtle_variable)
+                # draw_obstacle(path,turtle_variable)
                 del path_taken[path_taken.index(path)]
 
-                
+
         nb, dic = neighboring_cell(height,width,cells_size,current_cell)
 
 
         stack_it , paths = stack_control(cells_ref,dic,visit,obstacle_ref)
         if stack_it:
             stack.append(int(current_cell))
- 
+
         current_cell , moved, direction = path_finder(paths,cells_ref,visit,obstacle_ref,columns,rows,end_point_column_index,end_point_row_index,current_cell)
-    
-        print(direction)
+        # find_cell()
+        if direction == 'up':
+            # mechanics.forward_movement('robot_name',cells_size,degree,x,y)
+            command = ['Forward',f'{cells_size}']
+            x, y, degree, message, invalid_com = movement_logics.movement_logic('robot_name',command,x,y,degree,turtle_variable,obstacle_ref)
+            # print(message)
+
+        elif direction == 'down':
+            # mechanics.backwards_movement('robot_name',cells_size,degree,x,y)
+            command = ['Back',f'{cells_size}']
+            x, y, degree, message, invalid_com = movement_logics.movement_logic('robot_name',command,x,y,degree,turtle_variable,obstacle_ref)
+            # print(message)
+        else:
+            command = [direction.capitalize()]
+            x, y, degree, message, invalid_com = movement_logics.turn_logic('turn',command,x,y,degree,turtle_variable)
+            x, y, degree, message, invalid_com = movement_logics.movement_logic('robot',['Forward',f'{cells_size}'],x,y,degree,turtle_variable,obstacle_ref)
+        world.position_tracker('robot',(x,y,degree),turtle_variable)
 
 
+
+
+def find_cell(cell_ref,pos_x,pos_y,cell_size):
+
+    for cell in cell_ref:
+        if pos_x in range(cords[0],cords[0]+cell_size) and pos_y in range(cords[1],cords[1]+cell_size):
+            cords = cell[0]
+            cords_x = cords[0]+2
+            cords_y = cords[1]+2
+            
+            return cords_x, cords_y
+
+    return 0,0

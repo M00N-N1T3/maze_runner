@@ -103,13 +103,23 @@ test = [
 
 
 
-for col_index in range(len(test)):
-    
-    if col_index == 0:
-        print('forward 4')
-    
-    # the cells we are comparing
-    cell_1 = test[col_index][0]
-    cell_2 = test[col_index + 1][0]
-    # if col_index
-        
+# tracking position
+def position_tracker(robot_name: str,coordinates: tuple,turtle_variable: object) -> str:
+    """
+    tracks the x-axis and the y-axis position of the robot
+    Then Prints a message of the robots current position on the axises
+
+    Args:
+        robot_name (str): Name of the robot
+        x (int): the x axis of the robot
+        y (int): the y axis of the robot
+    """
+
+    x,y,degree = coordinates
+
+
+    # The position the robot is
+    print(f" > {robot_name} now at position ({x},{y}).")
+    return
+
+# using factor we can decide whether we should turn or not, pretty simple to be honest
