@@ -413,7 +413,7 @@ def path_finder(paths,cells_ref,visited_cells,obstacle_ref,columns_ref,rows_ref,
 
         horizontal_priority = None
         vertical_priority = None
-        direction = None
+
         
         # from flood_fill import set_priorities
         
@@ -424,29 +424,30 @@ def path_finder(paths,cells_ref,visited_cells,obstacle_ref,columns_ref,rows_ref,
             current_cell = paths[horizontal_priority]
             visited_cells.append(cells_ref[current_cell])
             moved = True
-            direction = horizontal_priority
+
             break 
         elif vertical_priority in paths.keys() and paths[vertical_priority] != None and cells_ref[int(paths[vertical_priority])] not in occupied_cells:
             current_cell = paths[vertical_priority]
             visited_cells.append(cells_ref[current_cell])
             moved = True
-            direction = vertical_priority
-            break                         
+
+            break
         elif horizontal_secondary in paths.keys() and paths[horizontal_secondary] != None and cells_ref[int(paths[horizontal_secondary])] not in occupied_cells:
             current_cell = paths[horizontal_secondary]
             visited_cells.append(cells_ref[current_cell])
             moved = True
-            direction = horizontal_secondary
+
             break 
         elif vertical_secondary in paths.keys() and paths[vertical_secondary] != None and cells_ref[int(paths[vertical_secondary])] not in occupied_cells:
             current_cell = paths[vertical_secondary]
             visited_cells.append(cells_ref[current_cell])
             moved = True
-            direction = vertical_secondary
+
             break
 
             
-    return current_cell,moved ,direction 
+    return current_cell,moved
+
 
 def draw_obstacle(cell: list|tuple,turtle_variable, color1: str = None,color2: str = None):
     """
@@ -512,7 +513,7 @@ def maze_runner(cells_ref,exit_points, obstacle_ref,current_cell,visited_cells,h
 
         # handles moving and popping from stack
         if moved == True:
-            # draw_obstacle(cells_ref[current_cell],turtle_variable,'Brown')
+            draw_obstacle(cells_ref[current_cell],turtle_variable,'Brown')
             path_taken.append(cells_ref[current_cell])
             if cells_ref[current_cell] == cells_ref[exit]:
                 # print("Winner")
@@ -525,7 +526,7 @@ def maze_runner(cells_ref,exit_points, obstacle_ref,current_cell,visited_cells,h
             for path in rev_path_taken:
                 if cells_ref[current_cell] == path:
                     break
-                # draw_obstacle(path,turtle_variable)
+                draw_obstacle(path,turtle_variable,'White')
                 del path_taken[path_taken.index(path)]
 
 
@@ -536,32 +537,9 @@ def maze_runner(cells_ref,exit_points, obstacle_ref,current_cell,visited_cells,h
         if stack_it:
             stack.append(int(current_cell))
 
-        current_cell , moved, direction = path_finder(paths,cells_ref,visit,obstacle_ref,columns,rows,end_point_column_index,end_point_row_index,current_cell)
-        # find_cell()
-        if direction == 'up':
-            # mechanics.forward_movement('robot_name',cells_size,degree,x,y)
-            command = ['Forward',f'{cells_size}']
-            x, y, degree, message, invalid_com = movement_logics.movement_logic('robot_name',command,x,y,degree,turtle_variable,obstacle_ref)
+        current_cell , moved = path_finder(paths,cells_ref,visit,obstacle_ref,columns,rows,end_point_column_index,end_point_row_index,current_cell)
 
-
-        elif direction == 'down':
-            # mechanics.backwards_movement('robot_name',cells_size,degree,x,y)
-            command = ['Forward',f'{cells_size}']
-            x, y, degree, message, invalid_com = movement_logics.movement_logic('robot_name',command,x,y,degree,turtle_variable,obstacle_ref)
-
-        elif direction == 'left':
-            command = ['Left']
-            if cells_ref[current_cell] in obstacle_ref:
-                x, y, degree, message, invalid_com = movement_logics.turn_logic('turn',command,x,y,degree,turtle_variable)
-            x, y, degree, message, invalid_com = movement_logics.movement_logic('robot',['Forward',f'{cells_size}'],x,y,degree,turtle_variable,obstacle_ref)
-
-        else:
-            command = ['Right']
-            if cells_ref[current_cell] in obstacle_ref:
-                x, y, degree, message, invalid_com = movement_logics.turn_logic('turn',command,x,y,degree,turtle_variable)
-            x, y, degree, message, invalid_com = movement_logics.movement_logic('robot',['Forward',f'{cells_size}'],x,y,degree,turtle_variable,obstacle_ref)
-        world.position_tracker('robot',(x,y,degree),turtle_variable)
-
+    return path_taken
 
 
 

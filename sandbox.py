@@ -304,7 +304,9 @@ def main_logic(robot_name,turtle_variable,obstacle,exits,cells_ref,obstacles):
         elif "Mazerun" in command:
             cell = obstacles.create_obstacle(x,y,4)
             current_cell = cells_ref.index(cell)
-            maze_runner(cells_ref,exits,obstacle,current_cell,[],408,208,4,"south",turtle_variable,x,y,degree)
+            path_taken = maze_runner(cells_ref,exits,obstacle,current_cell,[],408,208,4,"south",turtle_variable,x,y,degree)
+            print(path_taken)
+            # generate commands, pass it to command handle
 
 
         elif "Replay" in command or (command.count("-") == 1):
