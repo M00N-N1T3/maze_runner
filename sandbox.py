@@ -331,7 +331,8 @@ def robot_start():
     # import sandbox as obstacles
     """This is the entry function, do not change"""
 
-    robot_name = name_robot()
+    # robot_name = name_robot()
+    robot_name = 'testing'
 
     greet_user(robot_name)
     hunt = "north"
