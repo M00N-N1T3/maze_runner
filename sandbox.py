@@ -3,7 +3,7 @@ import sys
 import movement_logics
 import replay
 import import_helper
-from flood_fill import maze_runner
+from flood_fill import maze_runner, generate_commands
 
 
 # Initializer, loaded text or graphical version
@@ -279,7 +279,7 @@ def replay_logic(robot_name: str,command: str,x:int,y:int,degree:int,history: li
 
 
 # main game logic
-def main_logic(robot_name,turtle_variable,obstacle,exits,cells_ref,obstacles):
+def main_logic(robot_name,turtle_variable,obstacle,exits,cells_ref,obstacles,factor):
     # The robots axises. The at keeps track of the robots movement and position
     x, y = 0, 0
     # The degree is what keeps track of the direction that the robot is facing at any given time
@@ -305,7 +305,8 @@ def main_logic(robot_name,turtle_variable,obstacle,exits,cells_ref,obstacles):
             cell = obstacles.create_obstacle(x,y,4)
             current_cell = cells_ref.index(cell)
             path_taken = maze_runner(cells_ref,exits,obstacle,current_cell,[],408,208,4,"south",turtle_variable,x,y,degree)
-            print(path_taken)
+            commands = generate_commands(path_taken,cells_ref,factor)
+            print(commands)
             # generate commands, pass it to command handle
 
 
@@ -342,7 +343,7 @@ def robot_start():
     obstacles, maze_loaded = importer(robot_name)
     print(maze_loaded)
 
-    obstacle, exits, cell_ref = obstacles.generate_obstacles()
+    obstacle, exits, cell_ref,factor = obstacles.generate_obstacles()
     if len(obstacle) > 0:
         obs = world.show_obstacles(obstacle)
     else:
@@ -352,7 +353,7 @@ def robot_start():
             
 
     
-    main_logic(robot_name,turtle_variable,obs,exits,cell_ref,obstacles)
+    main_logic(robot_name,turtle_variable,obs,exits,cell_ref,obstacles,factor)
     return
 
 

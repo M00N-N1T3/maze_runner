@@ -74,7 +74,7 @@ def neighboring_cell(height: int,width: int,cell_size: int,current_cell_index: i
             sides[keys] = None
 
 
-    return now, sides
+    return now, sides, factor
 
 def stack_control(cells_ref: list|tuple , neighbors_dict: dict, visited_cells: list,obstacles: list):
     """
@@ -513,7 +513,7 @@ def maze_runner(cells_ref,exit_points, obstacle_ref,current_cell,visited_cells,h
 
         # handles moving and popping from stack
         if moved == True:
-            draw_obstacle(cells_ref[current_cell],turtle_variable,'Brown')
+            # draw_obstacle(cells_ref[current_cell],turtle_variable,'Brown')
             path_taken.append(cells_ref[current_cell])
             if cells_ref[current_cell] == cells_ref[exit]:
                 # print("Winner")
@@ -526,11 +526,11 @@ def maze_runner(cells_ref,exit_points, obstacle_ref,current_cell,visited_cells,h
             for path in rev_path_taken:
                 if cells_ref[current_cell] == path:
                     break
-                draw_obstacle(path,turtle_variable,'White')
+                # draw_obstacle(path,turtle_variable,'White')
                 del path_taken[path_taken.index(path)]
 
 
-        nb, dic = neighboring_cell(height,width,cells_size,current_cell)
+        nb, dic, factor = neighboring_cell(height,width,cells_size,current_cell)
 
 
         stack_it , paths = stack_control(cells_ref,dic,visit,obstacle_ref)
@@ -554,3 +554,33 @@ def find_cell(cell_ref,pos_x,pos_y,cell_size):
             return cords_x, cords_y
 
     return 0,0
+
+def generate_commands(path_taken,cell_ref,factor, cell_size = 4):
+    indexes, commands, old = [], [], None
+
+    for cell in path_taken:
+        
+        if cell in cell_ref:
+            indexes.append(cell_ref.index(cell))
+
+
+    for path in indexes:
+
+        # using degrees we can then decide if we should turn or not
+        if old != path and old != None:
+            if old + 1 ==  path:
+                commands.append(['Forward',f'{cell_size}'])
+            elif old - 1 == path:
+                commands.append(['Back',f'{cell_size}'])
+
+            elif old - factor == path:
+                commands.append(['Left'])
+
+            elif old + factor == path:
+                commands.append(['Right'])
+
+            old = path
+        else:
+            old = path
+    
+    return commands

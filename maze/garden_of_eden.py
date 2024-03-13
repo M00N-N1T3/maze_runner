@@ -84,7 +84,7 @@ def generate_obstacles(maze_height: int = 200, maze_width: int = 100, cell_size:
         else:
             break
         if moved:
-            neighbors, paths = neighboring_cell(maze_height,maze_width,cell_size,current_cell)
+            neighbors, paths, factor = neighboring_cell(maze_height,maze_width,cell_size,current_cell)
             moved = False
 
         if len(neighbors) != 0:
@@ -127,7 +127,7 @@ def generate_obstacles(maze_height: int = 200, maze_width: int = 100, cell_size:
                 moved = True
 
     # walls is a list of all our obstacles
-    return walls, exit_ref, cells
+    return walls, exit_ref, cells, factor
 
 
 def generate_maze(height: int, width: int, cell_size: int):
@@ -309,7 +309,7 @@ def neighboring_cell(height: int,width: int,cell_size: int,current_cell_index: i
             sides[keys] = None
 
 
-    return now, sides
+    return now, sides,factor
 
 # maze functions
 
@@ -450,13 +450,13 @@ def clearing_exit_pathway(maze_height: int,maze_width: int,cell_size: int, exits
     
     # generating pathway indexes
     for index in exits_ref:
-        nc , paths=neighboring_cell(maze_height,maze_width,cell_size,index)
+        nc , paths, factor=neighboring_cell(maze_height,maze_width,cell_size,index)
         tmp.extend(nc)
         # tmp.append(nc)
     exit_entrances = [index for index in tmp if index not in borders_ref]
     
     for index in exit_entrances:
-        nc , paths =neighboring_cell(maze_height,maze_width,cell_size,index)
+        nc ,paths, factor =neighboring_cell(maze_height,maze_width,cell_size,index)
         entrance_path.extend(nc)
         
     entrance_path = [index for index in entrance_path if index not in exit_entrances]
