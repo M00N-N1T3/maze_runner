@@ -3,7 +3,7 @@ import sys
 import movement_logics
 import replay
 import import_helper
-from flood_fill import maze_runner, generate_commands
+from flood_fill import maze_runner, generate_commands, find_cell
 
 
 # Initializer, loaded text or graphical version
@@ -302,11 +302,27 @@ def main_logic(robot_name,turtle_variable,obstacle,exits,cells_ref,obstacles,fac
             help_user()
             
         elif "Mazerun" in command:
-            cell = obstacles.create_obstacle(x,y,4)
-            current_cell = cells_ref.index(cell)
-            path_taken = maze_runner(cells_ref,exits,obstacle,current_cell,[],408,208,4,"south",turtle_variable,x,y,degree)
-            commands = generate_commands(path_taken,cells_ref,factor)
-            print(commands)
+
+            
+            try:
+                cell = obstacles.create_obstacle(x,y,4)
+                current_cell = cells_ref.index(cell)
+            except ValueError:
+                cell = obstacles.create_obstacle(x-2,y-2,4)
+                current_cell = cells_ref.index(cell)
+            path_taken = maze_runner(cells_ref,exits,obstacle,current_cell,[],408,208,4,"south",turtle.Turtle(),x,y,degree)
+            commands = generate_commands((x,y,degree),turtle_variable,path_taken,cells_ref,factor)
+            x,y = find_cell(cells_ref,x,y,4)
+            # turtle_variable.goto(x,y)
+            # print(commands)
+            for command in commands:
+                turns = ['Right','Left']
+                if command in turns:
+                    turn = command
+                
+                x,y,degree, message, invalid_com = command_handler(robot_name,command,x,y,degree,turtle_variable,obstacle)
+                coordinates = (x,y,degree)
+                world.position_tracker(robot_name,coordinates,turtle_variable)
             # generate commands, pass it to command handle
 
 

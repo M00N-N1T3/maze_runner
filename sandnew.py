@@ -1,6 +1,6 @@
 from maze import garden_of_eden as obstacles
-obstacle, exits, cell_ref = obstacles.generate_obstacles()
-factor = 102
+obstacle, exits, cell_ref, factor = obstacles.generate_obstacles()
+# factor = 102
 
 test = [
     ((4, 0), (4, 4), (0, 4), (0, 0)),
@@ -237,15 +237,15 @@ def generate_commands(path_taken,cell_ref,factor):
         # using degrees we can then decide if we should turn or not
         if old != path and old != None:
             if old + 1 ==  path:
-                commands.append(['Forward',f'{cell_size}'])
+                commands.append(" ".join(['Forward',f'{cell_size}']))
             elif old - 1 == path:
-                commands.append(['Back',f'{cell_size}'])
+                commands.append(" ".join(['Back',f'{cell_size}']))
 
             elif old - factor == path:
-                commands.append(['Left'])
+                commands.append('Left')
 
             elif old + factor == path:
-                commands.append(['Right'])
+                commands.append('Right')
 
             old = path
         else:
@@ -254,5 +254,8 @@ def generate_commands(path_taken,cell_ref,factor):
     return commands
 
 
-print(generate_commands(test,cell_ref,factor))
+coms = generate_commands(test,cell_ref,factor)
+
+for c in coms:
+    print(" ".join(c))
 # using the degrees we can then decide if we should turn

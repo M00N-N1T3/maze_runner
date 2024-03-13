@@ -513,7 +513,7 @@ def maze_runner(cells_ref,exit_points, obstacle_ref,current_cell,visited_cells,h
 
         # handles moving and popping from stack
         if moved == True:
-            # draw_obstacle(cells_ref[current_cell],turtle_variable,'Brown')
+            draw_obstacle(cells_ref[current_cell],turtle_variable,'Brown')
             path_taken.append(cells_ref[current_cell])
             if cells_ref[current_cell] == cells_ref[exit]:
                 # print("Winner")
@@ -526,7 +526,7 @@ def maze_runner(cells_ref,exit_points, obstacle_ref,current_cell,visited_cells,h
             for path in rev_path_taken:
                 if cells_ref[current_cell] == path:
                     break
-                # draw_obstacle(path,turtle_variable,'White')
+                draw_obstacle(path,turtle_variable,'White')
                 del path_taken[path_taken.index(path)]
 
 
@@ -555,9 +555,40 @@ def find_cell(cell_ref,pos_x,pos_y,cell_size):
 
     return 0,0
 
-def generate_commands(path_taken,cell_ref,factor, cell_size = 4):
-    indexes, commands, old = [], [], None
+def world_pos_tracker(turtle_variable):
+    """
+    tracks the x-axis and the y-axis position of the robot
+    Then returns a message of the robots current position in the world
 
+    Args:
+        robot_name (str): The name of the robot
+        turtle_variable : the turtle_name of the robot
+        
+    Returns:
+        list: The robot's current position on the world map
+        int : The robot's current degree of orientation
+        string: message on the robots whereabouts
+    """
+    
+    # retrieving the position of the turtle
+    robot_position = turtle_variable.pos()
+    # retrieves the degree that turtle is facing
+    degree = turtle_variable.heading()
+    
+    # converting the returned float into int
+    position = []
+    for pos in robot_position:
+        position.append(int(pos))
+        
+    # returning the message of the robots position 
+    # message = f" > {robot_name} now at position {tuple(position)}."
+    return position,degree
+
+def generate_commands(cords,turtle_variable,path_taken,cell_ref,factor, cell_size = 4):
+    indexes, commands, old,breaker = [], [], None,None
+    x,y,current_degree = cords
+    # position, 
+    
     for cell in path_taken:
         
         if cell in cell_ref:
@@ -569,15 +600,81 @@ def generate_commands(path_taken,cell_ref,factor, cell_size = 4):
         # using degrees we can then decide if we should turn or not
         if old != path and old != None:
             if old + 1 ==  path:
-                commands.append(['Forward',f'{cell_size}'])
+                actual_degree = 90
+                
+                if current_degree != actual_degree:
+                    while True:
+                        if breaker == 0:
+                            break
+                        breaker = current_degree - 90
+                        turns+=1
+                    for i in range(turns):
+                        if turns > 0:
+                            commands.append(['Right'])
+                        else:
+                            commands.append(['Left'])
+                com = " ".join(['Forward',f'{cell_size}'])
+                commands.append(com)
+
             elif old - 1 == path:
-                commands.append(['Back',f'{cell_size}'])
+                actual_degree = 270
+                if current_degree != actual_degree:
+                    while True:
+                        if breaker == 0:
+                            break
+                        breaker = current_degree - 90
+                        turns+=1
+                    for i in range(turns):
+                        if turns > 0:
+                            commands.append(['Right'])
+                        else:
+                            commands.append(['Left'])
+                com = " ".join(['Forward',f'{cell_size}'])
+                # com = " ".join(['Forward',f'{cell_size}'])
+                commands.append(com)
 
             elif old - factor == path:
-                commands.append(['Left'])
+                actual_degree = 180
+                # commands.append('Left')
 
+                if current_degree != actual_degree:
+                    while True:
+                        if breaker == 0:
+                            break
+                        breaker = current_degree - 90
+                        turns+=1
+                    for i in range(turns):
+                        if turns > 0:
+                            commands.append(['Right'])
+                        else:
+                            commands.append(['Left'])
+                com = " ".join(['Forward',f'{cell_size}'])
+                commands.append(com)
+                if current_degree >= 360:
+                    current_degree = 0
+                else:
+                    current_degree -= 90
             elif old + factor == path:
-                commands.append(['Right'])
+                actual_degree = 0
+                turns = 0
+                if current_degree != actual_degree:
+                    while True:
+                        if breaker == 0:
+                            break
+                        breaker = current_degree - 90
+                        turns+=1
+                    for i in range(turns):
+                        if turns > 0:
+                            commands.append(['Right'])
+                        else:
+                            commands.append(['Left'])
+                # commands.append('Right')
+                com = " ".join(['Forward',f'{cell_size}'])
+                commands.append(com)
+                if current_degree >= 360:
+                    current_degree = 0
+                else:
+                    current_degree += 90
 
             old = path
         else:
