@@ -508,37 +508,67 @@ def maze_runner(cells_ref,exit_points, obstacle_ref,current_cell,visited_cells,h
     moved = True
 
 
+    # while True:
+    #     # handles moving and popping from stack
+    #     if moved == True:
+    #         draw_obstacle(cells_ref[current_cell],turtle_variable,'Brown')
+    #         path_taken.append(cells_ref[current_cell])
+    #         if cells_ref[current_cell] == cells_ref[exit]:
+    #             # print("Winner")
+    #             break
+    #         moved = False
+    #     else:
+    #         rev_path_taken = list(reversed(path_taken))
+    #         current_cell = stack.pop()
+
+    #         for path in rev_path_taken:
+    #             if cells_ref[current_cell] == path:
+    #                 break
+    #             draw_obstacle(path,turtle_variable,'White')
+    #             del path_taken[path_taken.index(path)]
+
+
+    #     nb, dic, factor = neighboring_cell(height,width,cells_size,current_cell)
+
+
+    #     stack_it , paths = stack_control(cells_ref,dic,visit,obstacle_ref)
+    #     if stack_it:
+    #         stack.append(int(current_cell))
+
+    #     current_cell , moved = path_finder(paths,cells_ref,visit,obstacle_ref,columns,rows,end_point_column_index,end_point_row_index,current_cell)
+
+
     while True:
 
-
-        # handles moving and popping from stack
-        if moved == True:
-            draw_obstacle(cells_ref[current_cell],turtle_variable,'Brown')
-            path_taken.append(cells_ref[current_cell])
-            if cells_ref[current_cell] == cells_ref[exit]:
-                # print("Winner")
-                break
-            moved = False
-        else:
-            rev_path_taken = list(reversed(path_taken))
-            current_cell = stack.pop()
-
-            for path in rev_path_taken:
-                if cells_ref[current_cell] == path:
+        for i in range(30):
+            # handles moving and popping from stack
+            if moved == True:
+                draw_obstacle(cells_ref[current_cell],turtle_variable,'Brown')
+                path_taken.append(cells_ref[current_cell])
+                if cells_ref[current_cell] == cells_ref[exit]:
+                    # print("Winner")
                     break
-                draw_obstacle(path,turtle_variable,'White')
-                del path_taken[path_taken.index(path)]
+                moved = False
+            else:
+                rev_path_taken = list(reversed(path_taken))
+                current_cell = stack.pop()
+
+                for path in rev_path_taken:
+                    if cells_ref[current_cell] == path:
+                        break
+                    draw_obstacle(path,turtle_variable,'White')
+                    del path_taken[path_taken.index(path)]
 
 
-        nb, dic, factor = neighboring_cell(height,width,cells_size,current_cell)
+            nb, dic, factor = neighboring_cell(height,width,cells_size,current_cell)
 
 
-        stack_it , paths = stack_control(cells_ref,dic,visit,obstacle_ref)
-        if stack_it:
-            stack.append(int(current_cell))
+            stack_it , paths = stack_control(cells_ref,dic,visit,obstacle_ref)
+            if stack_it:
+                stack.append(int(current_cell))
 
-        current_cell , moved = path_finder(paths,cells_ref,visit,obstacle_ref,columns,rows,end_point_column_index,end_point_row_index,current_cell)
-
+            current_cell , moved = path_finder(paths,cells_ref,visit,obstacle_ref,columns,rows,end_point_column_index,end_point_row_index,current_cell)
+        break
     return path_taken
 
 
@@ -584,100 +614,114 @@ def world_pos_tracker(turtle_variable):
     # message = f" > {robot_name} now at position {tuple(position)}."
     return position,degree
 
+def rotate_robot(actual_degree, current_degree):
+    """
+    Calculates the number of times to turn the robot left/right
+    so that it is facing the correct direction that it needs to move forward in
+
+    Args:
+        actual_degree (int): the degree the robot needs to be facing in order to move forward in the specified direction
+        current_degree (int): the degree the robot is currently facing
+    Returns:
+        int : the number of times the robot needs to turn and in what direction (- left / + right)
+    """
+    turns = 0
+    while True:
+
+        if actual_degree == current_degree:
+            return 0
+
+        if current_degree < 0:
+            if current_degree < actual_degree:
+                current_degree = current_degree + 90
+                turns += 1  # turn right
+            else:
+                current_degree = current_degree - 90
+                turns-= 1   # turn left
+        else:
+            if current_degree < actual_degree:
+                current_degree = current_degree + 90
+                turns -= 1  # turn left
+            else:
+                current_degree = current_degree - 90
+                turns+= 1   # turn right
+
+        if current_degree == actual_degree:
+            break
+
+    return turns
+
+
 def generate_commands(cords,turtle_variable,path_taken,cell_ref,factor, cell_size = 4):
     indexes, commands, old,breaker = [], [], None,None
     x,y,current_degree = cords
-    # position, 
     
     for cell in path_taken:
         
         if cell in cell_ref:
             indexes.append(cell_ref.index(cell))
 
-
+    b = 0
     for path in indexes:
 
         # using degrees we can then decide if we should turn or not
         if old != path and old != None:
             if old + 1 ==  path:
                 actual_degree = 90
-                
-                if current_degree != actual_degree:
-                    while True:
-                        if breaker == 0:
-                            break
-                        breaker = current_degree - 90
-                        turns+=1
-                    for i in range(turns):
-                        if turns > 0:
-                            commands.append(['Right'])
-                        else:
-                            commands.append(['Left'])
+                turns = rotate_robot(actual_degree,current_degree)
+                for i in range(abs(turns)):
+                    if turns == 0:
+                        break
+                    elif turns > 0:
+                        commands.append('Right')
+                    else:
+                        commands.append('Left')
                 com = " ".join(['Forward',f'{cell_size}'])
                 commands.append(com)
 
             elif old - 1 == path:
                 actual_degree = 270
-                if current_degree != actual_degree:
-                    while True:
-                        if breaker == 0:
-                            break
-                        breaker = current_degree - 90
-                        turns+=1
-                    for i in range(turns):
-                        if turns > 0:
-                            commands.append(['Right'])
-                        else:
-                            commands.append(['Left'])
+                turns = rotate_robot(actual_degree,current_degree)
+                for i in range(abs(turns)):
+                    if turns == 0:
+                        break
+                    elif turns > 0:
+                        commands.append('Right')
+                    else:
+                        commands.append('Left')
                 com = " ".join(['Forward',f'{cell_size}'])
-                # com = " ".join(['Forward',f'{cell_size}'])
                 commands.append(com)
 
             elif old - factor == path:
                 actual_degree = 180
-                # commands.append('Left')
-
-                if current_degree != actual_degree:
-                    while True:
-                        if breaker == 0:
-                            break
-                        breaker = current_degree - 90
-                        turns+=1
-                    for i in range(turns):
-                        if turns > 0:
-                            commands.append(['Right'])
-                        else:
-                            commands.append(['Left'])
+                turns = rotate_robot(actual_degree,current_degree)
+                for i in range(abs(turns)):
+                    if turns == 0:
+                        break
+                    elif turns > 0:
+                        commands.append('Right')
+                    else:
+                        commands.append('Left')
                 com = " ".join(['Forward',f'{cell_size}'])
                 commands.append(com)
-                if current_degree >= 360:
-                    current_degree = 0
-                else:
-                    current_degree -= 90
+
             elif old + factor == path:
                 actual_degree = 0
-                turns = 0
-                if current_degree != actual_degree:
-                    while True:
-                        if breaker == 0:
-                            break
-                        breaker = current_degree - 90
-                        turns+=1
-                    for i in range(turns):
-                        if turns > 0:
-                            commands.append(['Right'])
-                        else:
-                            commands.append(['Left'])
-                # commands.append('Right')
+                turns = rotate_robot(actual_degree,current_degree)
+                for i in range(abs(turns)):
+                    if turns == 0:
+                        break
+                    elif turns > 0:
+                        commands.append('Right')
+                    else:
+                        commands.append('Left')
                 com = " ".join(['Forward',f'{cell_size}'])
                 commands.append(com)
-                if current_degree >= 360:
-                    current_degree = 0
-                else:
-                    current_degree += 90
 
+            current_degree = actual_degree
             old = path
         else:
+            com = " ".join(['Forward',f'{cell_size}'])
             old = path
-    
+
     return commands

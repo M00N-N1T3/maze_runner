@@ -311,14 +311,14 @@ def main_logic(robot_name,turtle_variable,obstacle,exits,cells_ref,obstacles,fac
                 cell = obstacles.create_obstacle(x-2,y-2,4)
                 current_cell = cells_ref.index(cell)
             path_taken = maze_runner(cells_ref,exits,obstacle,current_cell,[],408,208,4,"south",turtle.Turtle(),x,y,degree)
-            commands = generate_commands((x,y,degree),turtle_variable,path_taken,cells_ref,factor)
+            commands = generate_commands((x,y,degree),turtle_variable,path_taken,cells_ref,factor,2)
+            # commands = ['Forward 4','Right', 'Forward 4', 'Left', 'Forward 4', 'Right', 'Forward 4', 'Left', 'Forward 4', 'Forward 4', 'Forward 4', 'Right', 'Forward 4', 'Forward 4', 'Left', 'Forward 4', 'Right', 'Forward 4', 'Forward 4', 'Left', 'Left', 'Left', 'Forward 4', 'Right', 'Right', 'Right', 'Forward 4', 'Left', 'Left', 'Left', 'Forward 4', 'Forward 4', 'Right', 'Right', 'Right', 'Forward 4', 'Left', 'Forward 4', 'Right', 'Forward 4', 'Forward 4']
             x,y = find_cell(cells_ref,x,y,4)
-            # turtle_variable.goto(x,y)
-            # print(commands)
+            turtle_variable.goto(x,y)
             for command in commands:
-                turns = ['Right','Left']
-                if command in turns:
-                    turn = command
+                # turns = ['Right','Left']
+                # if command in turns:
+                #     turn = command
                 
                 x,y,degree, message, invalid_com = command_handler(robot_name,command,x,y,degree,turtle_variable,obstacle)
                 coordinates = (x,y,degree)
