@@ -4,7 +4,7 @@ from math import modf
 
 
 # full function
-def make_maze(maze_height: int | int = 210 , maze_width: int | int = 110, cell_size: int | int = 5 , color: str | str = 'white' ):
+def make_maze(maze_height: int | int = 210 , maze_width: int | int = 110, cell_size: int | int = 4 , color: str | str = 'white' ):
     """
     The main maze function, creates the maze for you
 

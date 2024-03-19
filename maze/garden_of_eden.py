@@ -211,7 +211,7 @@ def create_obstacle(xcord: int, ycord: int, cell_size: int):
     return tuple(obstacle)
 
 
-def spawn_obstacles(height: int = 210, width: int = 110,cell_size: int = 5):
+def spawn_obstacles(height: int = 210, width: int = 110,cell_size: int = 4):
     """
     Generates and fills the maze with cells of a specified cell s_size
 
@@ -536,7 +536,7 @@ def is_path_blocked(position1: tuple,position2: tuple,obstacles: list) -> bool:
     """
     # point 1 = (x,y)       point 2 = (x+4,y)
     #         |---------------------|
-    # (x1,y1) | pretend its 5 x 5   | (x2,y2)
+    # (x1,y1) | pretend its 4 x 4   | (x2,y2)
     #         |---------------------|
     # point 4 = (x,y+4)     point 3 = (x+4,y+4)
 
@@ -577,7 +577,7 @@ def is_position_blocked(x,y,obstacles: list) -> bool:
     """
     # point 1 = (x,y)       point 2 = (x+4,y)
     #         |---------------------|
-    #         | pretend its 5 x 5   |
+    #         | pretend its 4 x 4   |
     #         |---------------------|
     # point 4 = (x,y+4)     point 3 = (x+4,y+4)
 
@@ -588,7 +588,7 @@ def is_position_blocked(x,y,obstacles: list) -> bool:
 
     for obstacle in obstacles:
         x1,y1 = obstacle[0]
-        if (x in range(x1,x1+5) and y in range(y1,y1+5)):
+        if (x in range(x1,x1+4) and y in range(y1,y1+4)):
             return True
 
 

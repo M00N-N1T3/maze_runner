@@ -15,7 +15,7 @@ if 'turtle' in gui_loader:
 def create_obstacle(xcord: int = 100, ycord: int = 200, cell_size: int = 4) -> tuple:
     """
     creates the obstacles within our world
-    The obstacle is a 5 by 5 square.
+    The obstacle is a 4 by 4 square.
     Each corner of the square contains an (x,y) coordinate
     corner 1 = (x,y) | 2 = (x+4,y) | 3 = (x+4,y+4) | 4 = (x,y+4)
 
@@ -24,7 +24,7 @@ def create_obstacle(xcord: int = 100, ycord: int = 200, cell_size: int = 4) -> t
     """
     # point 1 = (x,y)       point 2 = (x+4,y)
     #         |---------------------|
-    #         | pretend its 5 x 5   |
+    #         | pretend its 4 x 4   |
     #         |---------------------|
     # point 4 = (x,y+4)     point 3 = (x+4,y+4)
     
@@ -43,7 +43,7 @@ def create_obstacle(xcord: int = 100, ycord: int = 200, cell_size: int = 4) -> t
 
     
     
-    # creating our 5 by 5 square 
+    # creating our 4 by 4 square 
     obstacle.append((xcord,ycord))
     obstacle.append((xcord+cell_size,ycord))
     obstacle.append((xcord+cell_size,ycord+cell_size))
@@ -55,7 +55,7 @@ def generate_obstacles(height=200 , width= 100, cell_size = 4):
     """
     Generates a  list of obstacles
     each obstacle is a tuple with a set of 4 tuples containing (x,y) coordinates
-    The set of 4 tuples, together create a 5 by 5 square (the obstacle)
+    The set of 4 tuples, together create a 4 by 4 square (the obstacle)
 
     Returns:
         list : a list of all the available obstacles in the world
@@ -70,7 +70,7 @@ def generate_obstacles(height=200 , width= 100, cell_size = 4):
         draw_obstacles(obstacles,height,width,cell_size,'black')
     return obstacles , exits
 
-def draw_obstacles(obstacles: list|tuple,maze_height: int = 210 , maze_width: int = 110, cell_size: int = 5 , color:  str = 'white' ):
+def draw_obstacles(obstacles: list|tuple,maze_height: int = 210 , maze_width: int = 110, cell_size: int = 4 , color:  str = 'white' ):
     """
     Draws a visual representation of the obstacles within the turtle realm
 
@@ -123,7 +123,7 @@ def is_path_blocked(position1: tuple,position2: tuple,obstacles: list) -> bool:
     """
     # point 1 = (x,y)       point 2 = (x+4,y)
     #         |---------------------|
-    # (x1,y1) | pretend its 5 x 5   | (x2,y2)
+    # (x1,y1) | pretend its 4 x 4   | (x2,y2)
     #         |---------------------|
     # point 4 = (x,y+4)     point 3 = (x+4,y+4)
 
@@ -164,7 +164,7 @@ def is_position_blocked(x,y,obstacles: list) -> bool:
     """
     # point 1 = (x,y)       point 2 = (x+4,y)
     #         |---------------------|
-    #         | pretend its 5 x 5   |
+    #         | pretend its 4 x 4   |
     #         |---------------------|
     # point 4 = (x,y+4)     point 3 = (x+4,y+4)
 
@@ -175,7 +175,7 @@ def is_position_blocked(x,y,obstacles: list) -> bool:
 
     for obstacle in obstacles:
         x1,y1 = obstacle[0]
-        if (x in range(x1,x1+5) and y in range(y1,y1+5)):
+        if (x in range(x1,x1+4) and y in range(y1,y1+4)):
             return True
 
 

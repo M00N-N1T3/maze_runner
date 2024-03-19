@@ -313,8 +313,8 @@ def main_logic(robot_name,turtle_variable,obstacle,exits,cells_ref,obstacles,fac
             path_taken = maze_runner(cells_ref,exits,obstacle,current_cell,[],408,208,4,"south",turtle.Turtle(),x,y,degree)
             commands = generate_commands((x,y,degree),turtle_variable,path_taken,cells_ref,factor,2)
             # commands = ['Forward 4','Right', 'Forward 4', 'Left', 'Forward 4', 'Right', 'Forward 4', 'Left', 'Forward 4', 'Forward 4', 'Forward 4', 'Right', 'Forward 4', 'Forward 4', 'Left', 'Forward 4', 'Right', 'Forward 4', 'Forward 4', 'Left', 'Left', 'Left', 'Forward 4', 'Right', 'Right', 'Right', 'Forward 4', 'Left', 'Left', 'Left', 'Forward 4', 'Forward 4', 'Right', 'Right', 'Right', 'Forward 4', 'Left', 'Forward 4', 'Right', 'Forward 4', 'Forward 4']
-            x,y = find_cell(cells_ref,x,y,4)
             turtle_variable.goto(x,y)
+            x,y = find_cell(cells_ref,x,y,4)
             for command in commands:
                 # turns = ['Right','Left']
                 # if command in turns:

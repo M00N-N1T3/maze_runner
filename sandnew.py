@@ -274,37 +274,68 @@ def rotate_robot(actual_degree, current_degree):
     Returns:
         int : the number of times the robot needs to turn and in what direction (- left / + right)
     """
-    turns = 0
-
-    if current_degree == 180:
-        current_degree = -180
-    while True:
-
-        if current_degree < 0:
-            if current_degree < actual_degree:
-                current_degree = current_degree + 90
-                turns += 1  # turn right
-            else:
-                current_degree = current_degree - 90
-                turns-= 1   # turn left
+    
+    north = [90,-270]
+    south = [-90,270]
+    east = [0,360]
+    west = [180,-180]
+    if current_degree in north:
+        # the idea is if we by 90/-270 and we want to go to 180
+        if actual_degree in north:
+            return None
+        
+        if actual_degree in west:
+            turn = ['Left']
+        elif actual_degree in east:
+            turn = ['Right']
         else:
-            if current_degree < actual_degree:
-                current_degree = current_degree + 90
-                turns -= 1  # turn left)
-            else:
-                current_degree = current_degree - 90
-                turns+= 1   # turn right
+            turn = ['Right','Right']
 
-        if current_degree == actual_degree:
-            break
+    
+    elif current_degree in south:
+        
+        if actual_degree in south:
+            return None
 
-    return turns
-
-
-turns = rotate_robot(270,90)
-print(turns)
-for i in range(abs(turns)):
-    if turns > 0:
-        print('right')
+        if actual_degree in east:
+            turn = ['Left']
+        elif actual_degree in west:
+            turn = ['Right']
+        else:
+            turn = ['Right','Right']
+            
+    elif current_degree in east:
+        
+        if actual_degree in east:
+            return None
+        
+        if actual_degree in north:
+            turn = ['Left']
+        elif actual_degree in south:
+            turn = ['Right']
+        else:
+            turn = ['Right','Right']
+            
     else:
-        print('left')
+        
+        if actual_degree in west:
+            return None
+        
+        if actual_degree in north:
+            turn = ['Right']
+        elif actual_degree in south:
+            turn = ['Left']
+        else:
+            turn = ['Right','Right']
+
+    return turn
+
+
+
+turns = rotate_robot(90,90)
+print(turns)
+# for i in range(abs(turns)):
+#     if turns > 0:
+#         print('right')
+#     else:
+#         print('left')
