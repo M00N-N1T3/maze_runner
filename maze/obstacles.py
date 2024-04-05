@@ -2,11 +2,11 @@ import random
 from sys import argv
 
 # display unit increases the graphics, easier on the eyes
-unit = 1.5
+unit = 1
 
 gui_loader = argv
 gui_loader = [word.lower() for word in gui_loader]
-# gui_loader.append('turtle')
+
 if 'turtle' in gui_loader:
     import turtle
 
@@ -51,8 +51,7 @@ def create_obstacle(xcord: int = 100, ycord: int = 200, cell_size: int = 4) -> t
 
     return tuple(obstacle)
 
-# def generate_obstacles(height=200 , width= 100, cell_size = 4):
-def generate_obstacles(height=200 , width= 100, cell_size = 10):
+def generate_obstacles(height=200 , width= 100, cell_size = 4):
     """
     Generates a  list of obstacles
     each obstacle is a tuple with a set of 4 tuples containing (x,y) coordinates
@@ -67,17 +66,19 @@ def generate_obstacles(height=200 , width= 100, cell_size = 10):
     # see if this is simple or mad man maze to be fair I think its simple
     obstacles = [create_obstacle(width,height,cell_size) for i in range (random.randint(0,10))]
     
+    # it will only draw the obstacles if we running in gui 
     if 'turtle' in gui_loader:
         draw_obstacles(obstacles,height,width,cell_size,'black')
+
     return obstacles , exits, None, None
 
-def draw_obstacles(obstacles: list|tuple,maze_height: int = 210 , maze_width: int = 110, cell_size: int = 4 , color:  str = 'white' ):
+def draw_obstacles(obstacles: list|tuple,maze_height: int = 204 , maze_width: int = 104, cell_size: int = 4 , color:  str = 'white' ):
     """
     Draws a visual representation of the obstacles within the turtle realm
 
     Args:
         obstacles (list): a list containing the coordinates of the obstacles
-        
+
     Returns:
         list: A list of all the obstacles drawn
     """
@@ -89,8 +90,8 @@ def draw_obstacles(obstacles: list|tuple,maze_height: int = 210 , maze_width: in
 
     # drawing the obstacles
     drawer = turtle.Turtle()
-    # drawer.hideturtle()
-    # turtle.tracer(0)
+    drawer.hideturtle()
+    turtle.tracer(0)
     
 
     for obstacle in obstacles:
@@ -104,7 +105,8 @@ def draw_obstacles(obstacles: list|tuple,maze_height: int = 210 , maze_width: in
             drawer.goto(z*unit,y*unit)
         drawer.end_fill()
 
-    # turtle.tracer(1)
+    turtle.tracer(1)
+
     return obstacles
 
 
@@ -175,12 +177,13 @@ def is_position_blocked(x,y,obstacles: list) -> bool:
         x1,y1 = obstacle[0]
 
 
-        for numx in range(x1-10,x1):
+        for numx in range(x1-4,x1):
             if x == int(numx):
 
-                for numy in range(y1,y1+10):
+                for numy in range(y1,y1+4):
                     if y == int(numy):
                         return True
+
     
     return False
 

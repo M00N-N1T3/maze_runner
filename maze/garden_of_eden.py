@@ -1,29 +1,28 @@
 """
 This maze algorithm was written in simple turtle language.
 Designed to simply the maze generation part of TR_5 maze.
-
-
 """
 __author__ = 'Johnny'
 __version__ = '1.0'
 
-# sandbox is where i code and test my logic
-import turtle
 import random
 import sys
 from math import modf
 
 gui_loader = sys.argv
 gui_loader = [word.lower() for word in gui_loader]
-# gui_loader.append('turtle')
+
+
+if 'turtle' in gui_loader:
+    import turtle
+
 
 
 unit = 1
-# unit = 1.5
+
 
 # full function
-# def generate_obstacles(maze_height: int = 200, maze_width: int = 100, cell_size: int = 4 , color: str = 'white' ):
-def generate_obstacles(maze_height: int = 200, maze_width: int = 100, cell_size: int = 10 , color: str = 'white' ):
+def generate_obstacles(maze_height: int = 200, maze_width: int = 100, cell_size: int = 4 , color: str = 'white' ):
     """
     The main maze function, creates the maze for you
 
@@ -34,17 +33,15 @@ def generate_obstacles(maze_height: int = 200, maze_width: int = 100, cell_size:
         color (str): The color of the obstacles in the maze
     """
 
-    # maze_height = maze_height * 1.5
-    # maze_width = maze_width * 1.5
 
     # initialization phase
     maze_height, maze_width = maze_height * 2 + cell_size * 2, maze_width * 2 + cell_size * 2 # accounting for external walls
 
 
-    # Rule 1: of programming, if it works do not fix it, the /2 is what is keeping this from breaking
-    # cells = generate_maze(maze_height / 2,maze_width/2,cell_size)22
+
     cells = generate_maze(maze_height ,maze_width,cell_size)
     current_cell = random.randint(0, len(cells) -1)
+
     # calculating the maximum amount of cell our grid can hold
     max_cell = maze_height / cell_size * maze_width / cell_size
 
@@ -200,25 +197,17 @@ def create_obstacle(xcord: int, ycord: int, cell_size: int):
 
 
     obstacle = list()
-    # xcord = xcord * 1.5
-    # xcord = ycord * 1.5
 
     obstacle.append((xcord + cell_size,ycord))
     obstacle.append((xcord + cell_size,ycord + cell_size))
     obstacle.append((xcord,ycord + cell_size))
     obstacle.append((xcord,ycord))
 
-    # turtle.goto((xcord + cell_size,ycord))
-    # turtle.goto((xcord + cell_size,ycord + cell_size))
-    # turtle.goto((xcord,ycord + cell_size))
-    # turtle.goto((xcord,ycord))
-
 
     return tuple(obstacle)
 
 
-# def spawn_obstacles(height: int = 210, width: int = 110,cell_size: int = 4):
-def spawn_obstacles(height: int = 220, width: int = 120,cell_size: int =10):
+def spawn_obstacles(height: int = 210, width: int = 110,cell_size: int = 4):
     """
     Generates and fills the maze with cells of a specified cell s_size
 
@@ -232,7 +221,7 @@ def spawn_obstacles(height: int = 220, width: int = 120,cell_size: int =10):
 
     cell_size also acts as the incrementing step for our print loop
     """
-    # height,width = height / 2, width / 2
+
     height,width = int(height/2), int(width/2)
 
     obstacle_ref = []
@@ -267,7 +256,9 @@ def neighboring_cell(height: int,width: int,cell_size: int,current_cell_index: i
     # The total number of cells in the maze
     cells_total = height / cell_size * width / cell_size
     # The max number of cells we can fit in a single y-axis column is known as our factor value
+    
     factor = height / cell_size # The factor value is the main dictator of how the maze is designed
+    
     # bottom/top walls float values
     wall_factor = format(modf(factor -1 / factor)[0],'.2f')
     # we get it by dividing 1 by factor, answer = n.wall_factor (7/8 = 0.125 | 125 = wall_factor)
@@ -320,8 +311,8 @@ def neighboring_cell(height: int,width: int,cell_size: int,current_cell_index: i
 
 # maze functions
 
-# def draw_maze_border(height: int = 200, width: int = 100):
-def draw_maze_border(height: int = 420, width: int = 220):
+
+def draw_maze_border(height: int = 408, width: int = 208):
     """Draws the outside walls of our maze (borders)
 
     Args:
@@ -387,6 +378,7 @@ def maze_exits(cells_ref: list, maze_height: int, cell_size: int):
 
     # setting factor
     factor = int(maze_height / cell_size)
+
     # initialing temporary lists
     border_walls, filtering_corners, exits = [], [], []
     exit_ref = dict()
@@ -505,7 +497,6 @@ def draw_obstacle(cell: list|tuple, color1: str,color2: str = None):
     """
     # starting coordinates for the cell color fill
     
-    # if 'turtle' in sys.argv:
     if 'turtle' in gui_loader:
         x1,y1 = cell[0]
 
@@ -555,21 +546,15 @@ def is_path_blocked(position1: tuple,position2: tuple,obstacles: list) -> bool:
     x2,y2 = position2
 
 
-    # bug add command check here 
-    # if back, all + must be -
     if x1 == x2:
-        step = -1 if y2 < y1 else 1
-        for y in range(y1,y2+step,step):
-            if is_position_blocked(x1,y,obstacles):
-                return True
+        if is_position_blocked(x1,y2,obstacles):
+            return True
     elif y1 == y2:
-        step = -1 if x2 < x1 else 1
-        for x in range(x1,x2+step,step):
-            if is_position_blocked(x,y1,obstacles):
-                return True
+
+        if is_position_blocked(x2,y1,obstacles):
+            return True
 
     return False
-
 
 def is_position_blocked(x,y,obstacles: list) -> bool:
     """
@@ -598,12 +583,20 @@ def is_position_blocked(x,y,obstacles: list) -> bool:
     # line 2: y to y+4
 
     for obstacle in obstacles:
+
         x1,y1 = obstacle[0]
-        if (x in range(x1,x1+4) and y in range(y1,y1+4)):
-            return True
 
 
+        for numx in range(x1-4,x1):
+            if x == int(numx):
+
+                for numy in range(y1,y1+4):
+                    if y == int(numy):
+                        return True
+
+    
     return False
+
 
 
 def path_forecast(command:list, x:int ,y:int,degree: int) -> tuple:
