@@ -1,5 +1,7 @@
 """
-Progress 
+This is the main maze solver module. I tried to very much implement theories and elements found in
+the flood fill algorithm. The attempt came out with little success but I was able to create and
+produce something similar to flood fill, but with  a dfs(depth first approach). 
 """
 from math import modf
 from world import world
@@ -28,6 +30,7 @@ def neighboring_cell(height: int,width: int,cell_size: int,current_cell_index: i
     # The total number of cells in the maze
     cells_total = height / cell_size * width / cell_size
     # The max number of cells we can fit in a single y-axis column is known as our factor value
+
     factor = height / cell_size # The factor value is the main dictator of how the maze is designed
     # bottom/top walls float values
     wall_factor = format(modf(factor -1 / factor)[0],'.2f')
@@ -151,7 +154,6 @@ def rows_and_columns(cells_ref: list|tuple, factor: int):
         for column in columns:
             tmp.append(column[i])
         rows.append(tmp)
-    # rows = [[column[j] for column in columns] for j in range(len(columns[0]))]
     
     return columns, rows
 
@@ -197,6 +199,7 @@ def exit_rows(rows_ref: list|tuple, exits: list):
                 exit_row = row
                 break
     return row
+    
     
 def current_cell_position(columns_ref: list|tuple, rows_ref: list|tuple, current_cell_index):
     """
@@ -251,70 +254,26 @@ def set_priorities(cc_column_index: int,cc_row_index, exit_point_column_index: i
     return horizontal_priority,vertical_priority,horizontal_secondary,vertical_secondary
 
 
-def target_distance(columns_ref: list|tuple, rows_ref: list|tuple, exit_column_index: int, current_cell_row_index: int, exit_cell_index: int, current_cell: int):
+def path_finder(paths,cells_ref,visited_cells,obstacle_ref,columns_ref,rows_ref,index_of_exit_column,index_of_exit_row,current_cell):
     """
-    Determines the horizontal and vertical distance from the current cell to the target (exit) 
+    Using list index referencing, we are able to track and trace which path to take
+    when trying to solve the maze.
 
     Args:
-        columns_ref (list | tuple): a list | tuple containing all the columns and their respective cell values
-        rows_ref (list | tuple): a list | tuple containing all the rows and their respective cell values
-        exit_column_index (int): the index of the column that our exit is in 
-        current_cell_row_index (int): the index of the row that our current cell is in
-        exit_cell_index (int): the index_value of the exit in the maze grid as a whole
-        current_cell_index (int): the index of the current cell that we on 
+        paths (dict): a dictionary containing all the relevant neighbors to our current cell
+        cells_ref (list): a list of all the cells in our grid
+        visited_cells (list): a list of all the cells we have previously visited/checked
+        obstacle_ref (list): a list of all the available obstacles in our maze grid
+        columns_ref (list): a list of all the columns in the grid and its respective cell indexes (all the indexes of the cells in a particular column)
+        rows_ref (list): a list of all the rows in the grid and its respective cell indexes
+        index_of_exit_column (int): the index of the column that contains the exit to the maze
+        index_of_exit_row (int): the index of the row that contains the exit to the maze
+        current_cell (int): the current cell(index) that we currently standing on
 
     Returns:
-        int : The horizontal distance from the current cell to the column of the target (exit)
-        int : The vertical distance from the current cell to the row of the target (exit)
+        int : current_cell - the new cell we should move to
+        bool: moved - a bool value that confirms whether we moved or not 
     """
-    
-    
-    # # we have rows that contains how many rows we have in our grid
-    # distance_row = rows_ref[cc_row_index] # the row that I am in and its values
-    # tmp = end_point_column_index    # the column that our target is in 
-    
-    # the current row of the cell and all the values in that row
-    for index_value in rows_ref[current_cell_row_index]: 
-        
-        # if the said value (index_value) is in both our column and row, that 
-        # makes it the linkage point between the column and row
-        if index_value in columns_ref[exit_column_index]:
-             
-            # the denominator is the common value in both lists
-            denominator = index_value
-            break
-        
-    exit_point_column = columns_ref[exit_column_index]
-    # this section determines the vertical distance (up and bottom)
-    if denominator > exit_cell_index:
-        # the start index, is the index of the exit_cell_value in our columns list
-        start = exit_point_column.index(exit_cell_index)
-        # the stop index, is the index of the denominator in our columns list
-        stop = exit_point_column.index(denominator)
-        vertical_distance = len(exit_point_column[start:stop])
-    else:
-        start = exit_point_column.index(exit_cell_index)
-        stop = exit_point_column.index(denominator)
-        vertical_distance = len(exit_point_column[stop:start]) # counting in reverse
-    
-    
-    # this determines the horizontal distance
-    exit_point_rows = rows_ref[current_cell_row_index]
-    if denominator < current_cell:
-        start = exit_point_rows.index(denominator)
-        stop = exit_point_rows.index(current_cell)
-        horizontal_distance = len(rows_ref[start:stop])
-    else:
-        start = exit_point_rows.index(denominator)
-        stop = exit_point_rows.index(current_cell)
-        horizontal_distance = len(rows_ref[stop:start])
-        
-    
-    return horizontal_distance, vertical_distance
-
-
-def path_finder(paths,cells_ref,visited_cells,obstacle_ref,columns_ref,rows_ref,index_of_exit_column,index_of_exit_row,current_cell):
-
 
     moved = False
     for key, values in paths.items():
@@ -323,29 +282,16 @@ def path_finder(paths,cells_ref,visited_cells,obstacle_ref,columns_ref,rows_ref,
         occupied_cells.extend(visited_cells)
         occupied_cells.extend(obstacle_ref)
 
-        
-        # from flood_fill import current_cell_position
-        # getting the column and the row of the current cell in tour grid 
+
+        # getting the column and the row of the current cell in tour grid
         cc_column_index, cc_row_index = current_cell_position(columns_ref,rows_ref, current_cell)
-        
-                                            
 
-            
-
-
-
-        
-        # down_dis , lat_dis = target_distance(columns_ref,rows_ref,index_of_exit_column,cc_row_index,index_of_exit_point,current_cell)
-            
 
         horizontal_priority = None
         vertical_priority = None
 
-        
-        # from flood_fill import set_priorities
-        
         horizontal_priority, vertical_priority, horizontal_secondary,vertical_secondary = set_priorities(cc_column_index,cc_row_index,index_of_exit_column,index_of_exit_row)
-                    
+
 
         if horizontal_priority in paths.keys() and paths[horizontal_priority] != None and cells_ref[int(paths[horizontal_priority])] not in occupied_cells:
             current_cell = paths[horizontal_priority]
@@ -376,48 +322,66 @@ def path_finder(paths,cells_ref,visited_cells,obstacle_ref,columns_ref,rows_ref,
     return current_cell,moved
 
 
-def draw_obstacle(cell: list|tuple,turtle_variable, color1: str = None,color2: str = None):
-    """
-    Fills in the color of the obstacles/path
+# def draw_obstacle(cell: list|tuple,turtle_variable, color1: str = None,color2: str = None):
+    # """
+    # Fills in the color of the obstacles/path
 
-    Args:
-        cell (list | tuple): A list of all the cell coordinates
-        color (list_): The color you want to paint the cells
-    """
-    # starting coordinates for the cell color fill
-    import turtle
-    # unit = 1.5
-    unit = 1
-    gui_loader = ['turtle']
-    # if 'turtle' in sys.argv:
-    if 'turtle' in gui_loader:
-        x1,y1 = cell[0]
+    # Args:
+    #     cell (list | tuple): A list of all the cell coordinates
+    #     color (list_): The color you want to paint the cells
+    # """
+    # # starting coordinates for the cell color fill
+    # import turtle
 
-        # turtle.tracer(0)
-        # turtle_variable.hideturtle()
-        turtle_variable.penup()
-        turtle_variable.goto(int(x1),int(y1))
-        # turtle_variable.goto(int(x1) * unit,int(y1) * unit)
-        turtle_variable.pen(pendown=True,fillcolor=color1,pensize=0,pencolor=color2,speed=0)
-        turtle_variable.begin_fill()
-        for cord in cell:
-            x,y = cord
-            turtle_variable.goto(int(x) ,int(y))
-            # turtle_variable.goto(int(x) * unit,int(y) * unit)
-        turtle_variable.goto(int(x1),int(y1))
-        # turtle_variable.goto(int(x1) * unit,int(y1) * unit)
-        turtle_variable.end_fill()
+    # if 'turtle' in gui_loader:
+    #     x1,y1 = cell[0]
 
-        # turtle.tracer(1)
-    else:
-        pass
+    #     turtle.tracer(0)
+    #     turtle_variable.hideturtle()
+    #     turtle_variable.penup()
+    #     turtle_variable.goto(int(x1),int(y1))
+    #     # turtle_variable.goto(int(x1) * unit,int(y1) * unit)
+    #     turtle_variable.pen(pendown=True,fillcolor=color1,pensize=0,pencolor=color2,speed=0)
+    #     turtle_variable.begin_fill()
+    #     for cord in cell:
+    #         x,y = cord
+    #         turtle_variable.goto(int(x) ,int(y))
+    #         # turtle_variable.goto(int(x) * unit,int(y) * unit)
+    #     turtle_variable.goto(int(x1),int(y1))
+    #     # turtle_variable.goto(int(x1) * unit,int(y1) * unit)
+    #     turtle_variable.end_fill()
+
+    #     # turtle.tracer(1)
+    # else:
+    #     pass
     
-    return None
+    # return None
 
 
 
 def maze_run(cells_ref,exit_points, obstacle_ref,current_cell,visited_cells,height,width,cells_size,hunt,turtle_variable,x,y,degree):
-    
+    """
+    The main maze run function. This function solves the maze via a process similar to depth first search. 
+    Using cell referencing we are able to draw a path from the robots current position all the way to the exit.
+
+    Args:
+        cells_ref (list): a list of all the cells in our grid
+        exit_points (list): a list containing all the indexes of the exit cells in our grid
+        obstacle_ref (list): a list of all the available obstacles in our maze grid
+        current_cell (int): the current cell(index) that we currently standing on
+        visited_cells (list): a list of all the cells we have previously visited/checked
+        height (int): the height of the maze (maze_grid)
+        width (int): the width of the maze (maze_grid)
+        cells_size (int): teh size of each cell in our grid
+        hunt (str): the direction through which we want to exit the maze ( e.g top, we would look for an exit on the top edge of teh maze)
+        turtle_variable (object): the turtle / robot we want to solve the maze with (used only during gui)
+        x (int): the current x coordinate of the robot in the maze
+        y (int): the current y coordinate of the robot in the maze
+        degree (int): teh current degree of orientation of the robot (where the robot is facing)
+
+    Returns:
+        list : the path that must be taken in order to solve the maze (relative to the robots current position in the maze)
+    """
     # exit_point
     for key,value in exit_points.items():
         if hunt == key:
@@ -442,7 +406,7 @@ def maze_run(cells_ref,exit_points, obstacle_ref,current_cell,visited_cells,heig
     while True:
         # handles moving and popping from stack
         if moved == True:
-            draw_obstacle(cells_ref[current_cell],turtle_variable,'Brown')
+            # draw_obstacle(cells_ref[current_cell],turtle_variable,'Brown')
             path_taken.append(cells_ref[current_cell])
             if cells_ref[current_cell] == cells_ref[exit]:
                 # print("Winner")
@@ -458,7 +422,7 @@ def maze_run(cells_ref,exit_points, obstacle_ref,current_cell,visited_cells,heig
                     break
                 
                 if cells_ref[441] != path:
-                    draw_obstacle(path,turtle_variable,'White')
+                    # draw_obstacle(path,turtle_variable,'White')
                     del path_taken[path_taken.index(path)]
 
 
@@ -476,6 +440,15 @@ def maze_run(cells_ref,exit_points, obstacle_ref,current_cell,visited_cells,heig
 
 
 def find_cell(cell_ref,pos_x,pos_y,cell_size):
+    """
+    finds the current cell that contains the current x and y coordinate that the robot is at
+
+    Args:
+        cell_ref (list): a list of all the available cells in the maze grid
+        pos_x (int): the current x coordinate of the robot in the maze
+        pos_y (int): the current y coordinate of the robot in the maze
+        cell_size (int): the size of a single cell in our grid
+    """
 
     for cell in cell_ref:
         cords = cell[0]
@@ -534,6 +507,9 @@ def rotate_robot(actual_degree, current_degree):
     south = [-90,270]
     east = [0,360]
     west = [180,-180]
+
+    turn = ['Right','Right']
+
     if current_degree in north:
         # the idea is if we by 90/-270 and we want to go to 180
         if actual_degree in north:
@@ -543,10 +519,7 @@ def rotate_robot(actual_degree, current_degree):
             turn = ['Left']
         elif actual_degree in east:
             turn = ['Right']
-        else:
-            turn = ['Right','Right']
 
-    
     elif current_degree in south:
         
         if actual_degree in south:
@@ -556,9 +529,7 @@ def rotate_robot(actual_degree, current_degree):
             turn = ['Left']
         elif actual_degree in west:
             turn = ['Right']
-        else:
-            turn = ['Right','Right']
-            
+
     elif current_degree in east:
         
         if actual_degree in east:
@@ -568,9 +539,7 @@ def rotate_robot(actual_degree, current_degree):
             turn = ['Left']
         elif actual_degree in south:
             turn = ['Right']
-        else:
-            turn = ['Right','Right']
-            
+
     else:
         
         if actual_degree in west:
@@ -580,8 +549,6 @@ def rotate_robot(actual_degree, current_degree):
             turn = ['Right']
         elif actual_degree in south:
             turn = ['Left']
-        else:
-            turn = ['Right','Right']
 
     return turn
 
@@ -616,7 +583,14 @@ def command_handler(robot_name,command,x,y,degree,turtle_variable,obstacle):
     return x,y,degree,message,invalid_com
 
 def fix_degree(current_degree):
-    
+    """
+    Converts the negative degree to its corresponding positive degree
+    Args:
+        current_degree (int): the turtles current degree
+
+    Returns:
+        int : the corresponding positive degree
+    """
 
     
     if current_degree == -270:
@@ -631,6 +605,20 @@ def fix_degree(current_degree):
     return current_degree
 
 def generate_steps_command(x,y,current_degree,cell_size):
+    """
+    Generates a command that gets fed into the command handler.
+    The command handler is in charge of controlling the robots movement, thus based
+    of the command that gets generated by this function, the robot shell execute what needs to be done
+
+    Args:
+        x (int): the robots current x coordinate
+        y (int): the robots current y coordinate
+        current_degree (int): the robots current degree of orientation
+        cell_size (int): teh size of a single cell in our maze grid
+
+    Returns:
+        str : the command that the robot needs to execute
+    """
     if current_degree == 0 and x + cell_size > 100:
         command = " ".join(['Forward',f'{100 - x}'])
 
@@ -645,13 +633,32 @@ def generate_steps_command(x,y,current_degree,cell_size):
 
     else:
         command = " ".join(['Forward',f'{cell_size}'])
-        
+
     return command
 
-# addition 2.1:
-# def generate_commands(cords,turtle_variable,path_taken,cell_ref,factor, cell_size = 4,unit = 1.5):
-def solve_maze(cords,robot_name,turtle_variables,path_taken,cell_ref,obstacles,factor,hunt = "top" ,cell_size = 10,unit = 1.5):
-    # from sandbox import command_handler
+
+def solve_maze(cords,robot_name,turtle_variables,path_taken,cell_ref,obstacles,factor,hunt = "top" ,cell_size = 4,unit = 1.5):
+    """
+    Using the corresponding robot, solve maze will issue a set of commands that will enable the robot
+    to traverse through the maze to the corresponding edge of the maze if specified.
+    By default the robot will traverse to the top edge of the maze
+
+    Args:
+        cords (tuple): a tuple containing the x and y coordinate and the degree of the robot
+        robot_name (str): the name of th robot
+        turtle_variables (object): the turtle object (used to move the turtle gui)
+        path_taken (list): a list containing all the indexes of the cells that we need to move to in order to solve the maze
+        cell_ref (list): a list of all the cells in our maze grid
+        obstacles (list): a list of all the obstacles in our maze grid
+        factor (int): factor is the max number of cells we can hold in a single column (height / cell_size)
+        hunt (str, optional): the edge of teh maze we wish to solve to. Defaults to "top".
+        cell_size (int, optional): the size of a single cell in the maze grid. Defaults to 4.
+
+
+    Returns:
+        tuple: x,y,current_degree - the robots new position in the maze grid once it has finished traversing the maze
+    """
+
     turtle_variable =turtle_variables
     path_cells, old_cell,breaker = [], None,None
     data = []
@@ -707,9 +714,13 @@ def solve_maze(cords,robot_name,turtle_variables,path_taken,cell_ref,obstacles,f
         else:
 
             # shifting into the centre of the starting cell
-            position, current_degree = world_pos_tracker(turtle_variable)
-            x,y = int(position[0]- cell_size / 2), int(position[1]+ cell_size /2)
-            turtle_variable.goto(x,y)
+            if turtle_variable != None:
+                position, current_degree = world_pos_tracker(turtle_variable)
+                x,y = int(position[0]- cell_size / 2), int(position[1]+ cell_size /2)
+                turtle_variable.goto(x,y)
+            else:
+                x,y = int(x - cell_size / 2), int(y+ cell_size /2)
+                
 
         old_cell = new_cell
 
