@@ -3,14 +3,15 @@ import sys
 import movement_logics
 import replay
 import import_helper
-from flood_fill import maze_runner
+# from flood_fill import maze_runner, solve_maze, find_cell
+# from mazesolver.simple_flood import solve_maze
 
 
 # Initializer, loaded text or graphical version
 gui_loader = sys.argv
 gui_loader = [word.lower() for word in gui_loader]
-gui_loader.append('turtle')
-gui_loader.append('garden_of_eden')
+# gui_loader.append('turtle')
+# gui_loader.append('garden_of_eden')
 
 
 if 'turtle' in gui_loader:
@@ -21,6 +22,30 @@ if 'turtle' in gui_loader:
     turtle_variable.penup()
 else:
     turtle_variable = None
+
+unit = 1
+# unit = 1.5
+
+# def importer(robot_name: str):
+#     """
+#     Loads a specific maze, specified by the user
+#     """
+#     if len(gui_loader) > 2:
+#         maze_loader = gui_loader[2]
+#         maze_module = "flood_fill"
+#     else:
+#         maze_loader = 'obstacles'
+#         maze_module = "simple_flood"
+
+
+#     obstacles = import_helper.dynamic_import(f'maze.{maze_loader}')
+#     maze_runner = import_helper.dynamic_import(f'mazerunner.{maze_module}')
+#     message = f'{robot_name}: Loaded {maze_loader}.'
+
+
+
+#     return obstacles,maze_runner, message
+        
 
 
 def importer(robot_name: str):
@@ -40,7 +65,14 @@ def importer(robot_name: str):
         obstacles = import_helper.dynamic_import(f'maze.{maze_loader}')
         message = f'{robot_name}: Loaded {maze_loader}.'
 
-    return obstacles, message
+    if maze_loader == "obstacles":
+        maze_runner = "simple_flood"
+    else:
+        maze_runner = "flood_fill"
+    
+    maze_runner = import_helper.dynamic_import(f'mazerunner.simple_flood')
+
+    return obstacles, maze_runner, message
         
 
 # Intro
@@ -278,8 +310,27 @@ def replay_logic(robot_name: str,command: str,x:int,y:int,degree:int,history: li
     return x,y,degree,message,invalid_com
 
 
+# mazerun logic
+def mazerun_direction(robot_name, command:str):
+    
+    command = command_splitter(command)
+    directions = ["top","right","left","bottom"]
+    message,direction = None,None
+    
+    if len(command) == 1:
+        direction = "top"
+        
+    elif len(command) == 2 and command[1].lower() in directions :
+        direction = command[1].lower()
+    else:
+        message = invalid_command(robot_name," ".join(command).strip())
+        
+    return message , direction
+
+
+
 # main game logic
-def main_logic(robot_name,turtle_variable,obstacle,exits,cells_ref,obstacles):
+def main_logic(robot_name,turtle_variable,obstacle,exits,cells_ref,obstacles,maze_runner,factor):
     # The robots axises. The at keeps track of the robots movement and position
     x, y = 0, 0
     # The degree is what keeps track of the direction that the robot is facing at any given time
@@ -302,10 +353,20 @@ def main_logic(robot_name,turtle_variable,obstacle,exits,cells_ref,obstacles):
             help_user()
             
         elif "Mazerun" in command:
-            cell = obstacles.create_obstacle(x,y,4)
-            current_cell = cells_ref.index(cell)
-            path = maze_runner(cells_ref,exits,obstacle,current_cell,[],408,208,4,"south",turtle_variable,x,y,degree)
-
+            print(f"{robot_name}: starting maze run..")
+            message,direction = mazerun_direction(robot_name,command)
+            
+            if message == None:
+                x1, y2,current_cell = maze_runner.find_cell(cells_ref,x,y,10)
+                
+                if current_cell != None:
+                    current_cell = current_cell + int(factor)
+                
+                path_taken = maze_runner.maze_run(cells_ref,exits,obstacle,current_cell,[],420,220,10,direction,turtle_variable,x,y,degree)
+                x,y ,degree = maze_runner.solve_maze((x,y,degree),robot_name,turtle_variable,path_taken,cells_ref,obstacle,factor,direction)
+                print(f"{robot_name}: I am at the {direction} edge.")
+            else:
+                print(message)
 
         elif "Replay" in command or (command.count("-") == 1):
             x,y,degree,message,invalid_com = replay_logic(robot_name,command,x,y,degree,history,turtle_variable,obstacle)
@@ -332,24 +393,25 @@ def robot_start():
     """This is the entry function, do not change"""
 
     robot_name = name_robot()
+    # robot_name = 'testing'
 
     greet_user(robot_name)
-    hunt = "north"
+
     # importing specified maze
-    obstacles, maze_loaded = importer(robot_name)
+    obstacles,maze_runner, maze_loaded = importer(robot_name)
     print(maze_loaded)
 
-    obstacle, exits, cell_ref = obstacles.generate_obstacles()
+    obstacle, exits, cell_ref,factor = obstacles.generate_obstacles()
     if len(obstacle) > 0:
         obs = world.show_obstacles(obstacle)
     else:
         obs = 0
     
 
-            
+ 
 
     
-    main_logic(robot_name,turtle_variable,obs,exits,cell_ref,obstacles)
+    main_logic(robot_name,turtle_variable,obstacle,exits,cell_ref,obstacles,maze_runner,factor)
     return
 
 

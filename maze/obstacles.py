@@ -6,7 +6,7 @@ unit = 1.5
 
 gui_loader = argv
 gui_loader = [word.lower() for word in gui_loader]
-gui_loader.append('turtle')
+# gui_loader.append('turtle')
 if 'turtle' in gui_loader:
     import turtle
 
@@ -51,7 +51,8 @@ def create_obstacle(xcord: int = 100, ycord: int = 200, cell_size: int = 4) -> t
 
     return tuple(obstacle)
 
-def generate_obstacles(height=200 , width= 100, cell_size = 4):
+# def generate_obstacles(height=200 , width= 100, cell_size = 4):
+def generate_obstacles(height=200 , width= 100, cell_size = 10):
     """
     Generates a  list of obstacles
     each obstacle is a tuple with a set of 4 tuples containing (x,y) coordinates
@@ -68,7 +69,7 @@ def generate_obstacles(height=200 , width= 100, cell_size = 4):
     
     if 'turtle' in gui_loader:
         draw_obstacles(obstacles,height,width,cell_size,'black')
-    return obstacles , exits
+    return obstacles , exits, None, None
 
 def draw_obstacles(obstacles: list|tuple,maze_height: int = 210 , maze_width: int = 110, cell_size: int = 4 , color:  str = 'white' ):
     """
@@ -131,20 +132,16 @@ def is_path_blocked(position1: tuple,position2: tuple,obstacles: list) -> bool:
     x2,y2 = position2
 
 
-    # bug add command check here 
-    # if back, all + must be -
     if x1 == x2:
-        step = -1 if y2 < y1 else 1
-        for y in range(y1,y2+step,step):
-            if is_position_blocked(x1,y,obstacles):
-                return True
+        if is_position_blocked(x1,y2,obstacles):
+            return True
     elif y1 == y2:
-        step = -1 if x2 < x1 else 1
-        for x in range(x1,x2+step,step):
-            if is_position_blocked(x,y1,obstacles):
-                return True
+
+        if is_position_blocked(x2,y1,obstacles):
+            return True
 
     return False
+
 
 
 def is_position_blocked(x,y,obstacles: list) -> bool:
@@ -174,11 +171,17 @@ def is_position_blocked(x,y,obstacles: list) -> bool:
     # line 2: y to y+4
 
     for obstacle in obstacles:
+
         x1,y1 = obstacle[0]
-        if (x in range(x1,x1+4) and y in range(y1,y1+4)):
-            return True
 
 
+        for numx in range(x1-10,x1):
+            if x == int(numx):
+
+                for numy in range(y1,y1+10):
+                    if y == int(numy):
+                        return True
+    
     return False
 
 

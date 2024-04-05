@@ -145,7 +145,7 @@ if __name__ == '__main__':
 
     
     
-    from flood_fill import rows_and_columns
+    from mazerunner.flood_fill import rows_and_columns
     
     columns, rows = rows_and_columns(cells,f)
     
@@ -180,7 +180,7 @@ if __name__ == '__main__':
     
     end_point_index = cells.index(end)
 
-    from flood_fill import exit_columns, exit_rows
+    from mazerunner.flood_fill import exit_columns, exit_rows
     
 
     end_point_column_index = exit_columns(columns,[end_point_index])[0]
@@ -266,7 +266,7 @@ if __name__ == '__main__':
                
             # if hunt == 'south': 
 
-    from flood_fill import target_distance,path_finder, maze_runner
+    from mazerunner.flood_fill import target_distance,path_finder, maze_runner
     # cc , moved = path_finder(paths,cells,visit,obs,columns,rows,end_point_column_index,end_point_row_index,cc)
     b = {"south":end_point_index}
     path_taken = maze_runner(cells,b,obs,cc,visit,h,w,cs,"south")

@@ -15,13 +15,15 @@ from math import modf
 
 gui_loader = sys.argv
 gui_loader = [word.lower() for word in gui_loader]
-gui_loader.append('turtle')
+# gui_loader.append('turtle')
 
 
-unit = 1.5
+unit = 1
+# unit = 1.5
 
 # full function
-def generate_obstacles(maze_height: int = 200, maze_width: int = 100, cell_size: int = 4 , color: str = 'white' ):
+# def generate_obstacles(maze_height: int = 200, maze_width: int = 100, cell_size: int = 4 , color: str = 'white' ):
+def generate_obstacles(maze_height: int = 200, maze_width: int = 100, cell_size: int = 10 , color: str = 'white' ):
     """
     The main maze function, creates the maze for you
 
@@ -32,13 +34,16 @@ def generate_obstacles(maze_height: int = 200, maze_width: int = 100, cell_size:
         color (str): The color of the obstacles in the maze
     """
 
+    # maze_height = maze_height * 1.5
+    # maze_width = maze_width * 1.5
 
     # initialization phase
     maze_height, maze_width = maze_height * 2 + cell_size * 2, maze_width * 2 + cell_size * 2 # accounting for external walls
 
 
     # Rule 1: of programming, if it works do not fix it, the /2 is what is keeping this from breaking
-    cells = generate_maze(maze_height / 2,maze_width/2,cell_size)
+    # cells = generate_maze(maze_height / 2,maze_width/2,cell_size)22
+    cells = generate_maze(maze_height ,maze_width,cell_size)
     current_cell = random.randint(0, len(cells) -1)
     # calculating the maximum amount of cell our grid can hold
     max_cell = maze_height / cell_size * maze_width / cell_size
@@ -195,7 +200,8 @@ def create_obstacle(xcord: int, ycord: int, cell_size: int):
 
 
     obstacle = list()
-    
+    # xcord = xcord * 1.5
+    # xcord = ycord * 1.5
 
     obstacle.append((xcord + cell_size,ycord))
     obstacle.append((xcord + cell_size,ycord + cell_size))
@@ -211,7 +217,8 @@ def create_obstacle(xcord: int, ycord: int, cell_size: int):
     return tuple(obstacle)
 
 
-def spawn_obstacles(height: int = 210, width: int = 110,cell_size: int = 4):
+# def spawn_obstacles(height: int = 210, width: int = 110,cell_size: int = 4):
+def spawn_obstacles(height: int = 220, width: int = 120,cell_size: int =10):
     """
     Generates and fills the maze with cells of a specified cell s_size
 
@@ -219,14 +226,14 @@ def spawn_obstacles(height: int = 210, width: int = 110,cell_size: int = 4):
         height (int): The height of the maze / length of y-axis
         width (int): The width of the maze / length of x-axis
         cell_size (int): The size of the cell
-        
+
     Returns:
         list: A list of all the coordinates of our cells
 
     cell_size also acts as the incrementing step for our print loop
     """
     # height,width = height / 2, width / 2
-    height,width = int(height), int(width)
+    height,width = int(height/2), int(width/2)
 
     obstacle_ref = []
     # width is the values on our x-axis on the cartesian plain
@@ -313,7 +320,8 @@ def neighboring_cell(height: int,width: int,cell_size: int,current_cell_index: i
 
 # maze functions
 
-def draw_maze_border(height: int = 200, width: int = 100):
+# def draw_maze_border(height: int = 200, width: int = 100):
+def draw_maze_border(height: int = 420, width: int = 220):
     """Draws the outside walls of our maze (borders)
 
     Args:
@@ -407,22 +415,22 @@ def maze_exits(cells_ref: list, maze_height: int, cell_size: int):
     left_exit = [index for index in left_walls if index in filtering_corners]
     exit_1 = random.choice(left_exit)
     exits.append(exit_1)
-    exit_ref["west"] = exit_1
+    exit_ref["left"] = exit_1
 
     right_exit = [index for index in right_walls if index in filtering_corners]
     exit_2 = random.choice(right_exit)
     exits.append(exit_2)
-    exit_ref["east"] = exit_2
+    exit_ref["right"] = exit_2
 
     top_exit = [index for index in top_walls if index in filtering_corners]
     exit_3 = random.choice(top_exit)
     exits.append(exit_3)
-    exit_ref["north"] = exit_3
+    exit_ref["top"] = exit_3
 
     bottom_exit = [index for index in bottom_walls if index in filtering_corners]
     exit_4 = random.choice(bottom_exit)
     exits.append(exit_4)
-    exit_ref["south"] = exit_4
+    exit_ref["bottom"] = exit_4
 
 
     return exit_ref, exits, border_walls
@@ -504,13 +512,16 @@ def draw_obstacle(cell: list|tuple, color1: str,color2: str = None):
         turtle.tracer(0)
         turtle.hideturtle()
         turtle.penup()
-        turtle.goto(int(x1) * unit,int(y1) * unit)
+        turtle.goto(int(x1),int(y1))
+        # turtle.goto(int(x1) * unit,int(y1) * unit)
         turtle.pen(pendown=True,fillcolor=color1,pensize=0,pencolor=color2,speed=0)
         turtle.begin_fill()
         for cord in cell:
             x,y = cord
-            turtle.goto(int(x) * unit,int(y) * unit)
-        turtle.goto(int(x1) * unit,int(y1) * unit)
+            turtle.goto(int(x),int(y))
+            # turtle.goto(int(x) * unit,int(y) * unit)
+        turtle.goto(int(x1),int(y1))
+        # turtle.goto(int(x1) * unit,int(y1) * unit)
         turtle.end_fill()
 
         turtle.tracer(1)

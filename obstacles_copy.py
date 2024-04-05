@@ -2,7 +2,8 @@ import random
 from sys import argv
 
 # display unit increases the graphics, easier on the eyes
-unit = 1.5
+unit = 1
+# unit = 1.5
 
 gui_loader = argv
 gui_loader = [word.lower() for word in gui_loader]
@@ -131,20 +132,53 @@ def is_path_blocked(position1: tuple,position2: tuple,obstacles: list) -> bool:
     x2,y2 = position2
 
 
-    # bug add command check here 
-    # if back, all + must be -
     if x1 == x2:
-        step = -1 if y2 < y1 else 1
-        for y in range(y1,y2+step,step):
-            if is_position_blocked(x1,y,obstacles):
-                return True
+        if is_position_blocked(x1,y2,obstacles):
+            return True
     elif y1 == y2:
-        step = -1 if x2 < x1 else 1
-        for x in range(x1,x2+step,step):
-            if is_position_blocked(x,y1,obstacles):
-                return True
+
+        if is_position_blocked(x2,y1,obstacles):
+            return True
 
     return False
+
+
+# move this later, I added for visulas 
+
+def draw_obstacle(cell: list|tuple, color1: str,color2: str = None):
+    """
+    Fills in the color of the obstacles/path
+
+    Args:
+        cell (list | tuple): A list of all the cell coordinates
+        color (list_): The color you want to paint the cells
+    """
+    # starting coordinates for the cell color fill
+    
+    # if 'turtle' in sys.argv:
+    if 'turtle' in gui_loader:
+        x1,y1 = cell[0]
+
+        # turtle.tracer(0)
+        turtle.hideturtle()
+        turtle.penup()
+        turtle.goto(int(x1),int(y1))
+        # turtle.goto(int(x1) * unit,int(y1) * unit)
+        turtle.pen(pendown=True,fillcolor=color1,pensize=0,pencolor=color2,speed=5)
+        turtle.begin_fill()
+        for cord in cell:
+            x,y = cord
+            turtle.goto(int(x),int(y))
+            # turtle.goto(int(x) * unit,int(y) * unit)
+        turtle.goto(int(x1),int(y1))
+        # turtle.goto(int(x1) * unit,int(y1) * unit)
+        turtle.end_fill()
+
+        # turtle.tracer(1)
+    else:
+        pass
+    
+    return None
 
 
 def is_position_blocked(x,y,obstacles: list) -> bool:
@@ -174,9 +208,18 @@ def is_position_blocked(x,y,obstacles: list) -> bool:
     # line 2: y to y+4
 
     for obstacle in obstacles:
+
         x1,y1 = obstacle[0]
-        if (x in range(x1,x1+4) and y in range(y1,y1+4)):
-            return True
+
+
+        for numx in range(x1-10,x1):
+            if x == int(numx):
+
+                for numy in range(y1,y1+10):
+                    if y == int(numy):
+                        draw_obstacle(obstacle,"yellow","black")
+                        return True
+
 
 
     return False

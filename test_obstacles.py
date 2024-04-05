@@ -32,18 +32,18 @@ class Test_Obstacle_Generation(unittest.TestCase):
     def test_obstacle_gen(self):
         with captured_output() as (out,err):
             output = generate_obstacles()
-            self.assertIsInstance(output,list)
+            self.assertIsInstance(output,tuple)
     
     def test_num_obstacles(self):
         random.randint = lambda a, b: 10
         with captured_output() as (out,err):
-            output = generate_obstacles()
+            output = generate_obstacles()[0]
             self.assertEqual(len(output),10)
     
     def test_element_in_obstacle(self):
         random.randint = lambda a, b: 10
         with captured_output() as (out,err):
-            output = generate_obstacles()
+            output = generate_obstacles()[0]
             element = output[0]
             self.assertIsInstance(element,tuple)
             

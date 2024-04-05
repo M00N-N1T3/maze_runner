@@ -3,8 +3,11 @@ Progress
 """
 from math import modf
 from world import world
-import mechanics
 import movement_logics
+
+
+# unit = 1.5
+unit = 1
 
 def neighboring_cell(height: int,width: int,cell_size: int,current_cell_index: int):
     """
@@ -112,81 +115,6 @@ def stack_control(cells_ref: list|tuple , neighbors_dict: dict, visited_cells: l
     
     return False, tmp
 
-
-def hunt_north(current_cell: int|float , cells_ref: list,paths_dict: dict, visited_list: list,occupied_cells: list, target: list|tuple, target_column: list, target_row: list):
-    
-    
-    if current_cell in target_column:
-        if 'up' in paths_dict.keys() and paths_dict['up'] != None and cells_ref[int(paths_dict['up'])] not in occupied_cells:
-            current_cell = paths_dict['up']
-            visited_list.append(cells_ref[current_cell])
-            return True, current_cell
-        
-    if current_cell in target_row:
-        if current_cell < cells_ref.index(target):
-            
-            if 'right' in paths_dict.keys() and paths_dict['right'] != None and cells_ref[int(paths_dict['right'])] not in occupied_cells:
-                current_cell = paths_dict['right']
-                visited_list.append(cells_ref[current_cell])
-                return True, current_cell
-            
-            if 'left' in paths_dict.keys() and paths_dict['left'] != None and cells_ref[int(paths_dict['left'])] not in occupied_cells:
-                current_cell = paths_dict['left']
-                visited_list.append(cells_ref[current_cell])
-                return True, current_cell
-        else:
-            
-            if 'left' in paths_dict.keys() and paths_dict['left'] != None and cells_ref[int(paths_dict['left'])] not in occupied_cells:
-                current_cell = paths_dict['left']
-                visited_list.append(cells_ref[current_cell])
-                return True, current_cell
-            
-            if 'right' in paths_dict.keys() and paths_dict['right'] != None and cells_ref[int(paths_dict['right'])] not in occupied_cells:
-                current_cell = paths_dict['right']
-                visited_list.append(cells_ref[current_cell])
-                return True, current_cell
-
-    
-    
-    if 'up' in paths_dict.keys() and paths_dict['up'] != None and cells_ref[int(paths_dict['up'])] not in occupied_cells:
-        current_cell = paths_dict['up']
-        visited_list.append(cells_ref[current_cell])
-        return True, current_cell
-    
-    if current_cell < cells_ref.index(target):
-    
-        if 'right' in paths_dict.keys() and paths_dict['right'] != None and cells_ref[int(paths_dict['right'])] not in occupied_cells:
-            current_cell = paths_dict['right']
-            visited_list.append(cells_ref[current_cell])
-            return True, current_cell
-        
-        if 'left' in paths_dict.keys() and paths_dict['left'] != None and cells_ref[int(paths_dict['left'])] not in occupied_cells:
-            current_cell = paths_dict['left']
-            visited_list.append(cells_ref[current_cell])
-            return  True, current_cell 
-    else:
-        
-        if 'left' in paths_dict.keys() and paths_dict['left'] != None and cells_ref[int(paths_dict['left'])] not in occupied_cells:
-            current_cell = paths_dict['left']
-            visited_list.append(cells_ref[current_cell])
-            return True, current_cell
-        
-        if 'right' in paths_dict.keys() and paths_dict['right'] != None and cells_ref[int(paths_dict['right'])] not in occupied_cells:
-            current_cell = paths_dict['right']
-            visited_list.append(cells_ref[current_cell])
-            return True, current_cell
-        
-
-    if 'down' in paths_dict.keys() and paths_dict['down'] != None and cells_ref[int(paths_dict['down'])] not in occupied_cells:
-        current_cell = paths_dict['down']
-        visited_list.append(cells_ref[current_cell])
-        return True, current_cell
-    
-    # if len(paths_dict) == 1 and cells_ref[int(paths_dict['up'])] not in occupied_cells:
-    #     current_cell = paths_dict[key]
-    #     visited.append(cells_ref[current_cell])
-    return False, current_cell
-    
 
 def rows_and_columns(cells_ref: list|tuple, factor: int):
     """
@@ -405,8 +333,7 @@ def path_finder(paths,cells_ref,visited_cells,obstacle_ref,columns_ref,rows_ref,
             
 
 
-                
-        # from flood_fill import target_distance
+
         
         # down_dis , lat_dis = target_distance(columns_ref,rows_ref,index_of_exit_column,cc_row_index,index_of_exit_point,current_cell)
             
@@ -459,25 +386,29 @@ def draw_obstacle(cell: list|tuple,turtle_variable, color1: str = None,color2: s
     """
     # starting coordinates for the cell color fill
     import turtle
-    unit = 1.5
+    # unit = 1.5
+    unit = 1
     gui_loader = ['turtle']
     # if 'turtle' in sys.argv:
     if 'turtle' in gui_loader:
         x1,y1 = cell[0]
 
-        turtle.tracer(0)
+        # turtle.tracer(0)
         # turtle_variable.hideturtle()
         turtle_variable.penup()
-        turtle_variable.goto(int(x1) * unit,int(y1) * unit)
+        turtle_variable.goto(int(x1),int(y1))
+        # turtle_variable.goto(int(x1) * unit,int(y1) * unit)
         turtle_variable.pen(pendown=True,fillcolor=color1,pensize=0,pencolor=color2,speed=0)
         turtle_variable.begin_fill()
         for cord in cell:
             x,y = cord
-            turtle_variable.goto(int(x) * unit,int(y) * unit)
-        turtle_variable.goto(int(x1) * unit,int(y1) * unit)
+            turtle_variable.goto(int(x) ,int(y))
+            # turtle_variable.goto(int(x) * unit,int(y) * unit)
+        turtle_variable.goto(int(x1),int(y1))
+        # turtle_variable.goto(int(x1) * unit,int(y1) * unit)
         turtle_variable.end_fill()
 
-        turtle.tracer(1)
+        # turtle.tracer(1)
     else:
         pass
     
@@ -485,7 +416,7 @@ def draw_obstacle(cell: list|tuple,turtle_variable, color1: str = None,color2: s
 
 
 
-def maze_runner(cells_ref,exit_points, obstacle_ref,current_cell,visited_cells,height,width,cells_size,hunt,turtle_variable,x,y,degree):
+def maze_run(cells_ref,exit_points, obstacle_ref,current_cell,visited_cells,height,width,cells_size,hunt,turtle_variable,x,y,degree):
     
     # exit_point
     for key,value in exit_points.items():
@@ -494,7 +425,7 @@ def maze_runner(cells_ref,exit_points, obstacle_ref,current_cell,visited_cells,h
             break
     
     paths_available = [cell for cell in cells_ref if cell not in obstacle_ref]
-    x,y = find_cell(paths_available,x,y,cells_size)
+    x1,y2, cc = find_cell(paths_available,x,y,cells_size)
 
     stack, visit ,path_taken= [],visited_cells,[]
 
@@ -508,67 +439,38 @@ def maze_runner(cells_ref,exit_points, obstacle_ref,current_cell,visited_cells,h
     moved = True
 
 
-    # while True:
-    #     # handles moving and popping from stack
-    #     if moved == True:
-    #         draw_obstacle(cells_ref[current_cell],turtle_variable,'Brown')
-    #         path_taken.append(cells_ref[current_cell])
-    #         if cells_ref[current_cell] == cells_ref[exit]:
-    #             # print("Winner")
-    #             break
-    #         moved = False
-    #     else:
-    #         rev_path_taken = list(reversed(path_taken))
-    #         current_cell = stack.pop()
-
-    #         for path in rev_path_taken:
-    #             if cells_ref[current_cell] == path:
-    #                 break
-    #             draw_obstacle(path,turtle_variable,'White')
-    #             del path_taken[path_taken.index(path)]
-
-
-    #     nb, dic, factor = neighboring_cell(height,width,cells_size,current_cell)
-
-
-    #     stack_it , paths = stack_control(cells_ref,dic,visit,obstacle_ref)
-    #     if stack_it:
-    #         stack.append(int(current_cell))
-
-    #     current_cell , moved = path_finder(paths,cells_ref,visit,obstacle_ref,columns,rows,end_point_column_index,end_point_row_index,current_cell)
-
-
     while True:
+        # handles moving and popping from stack
+        if moved == True:
+            draw_obstacle(cells_ref[current_cell],turtle_variable,'Brown')
+            path_taken.append(cells_ref[current_cell])
+            if cells_ref[current_cell] == cells_ref[exit]:
+                # print("Winner")
+                break
+            moved = False
+        else:
+            rev_path_taken = list(reversed(path_taken))
+            current_cell = stack.pop()
 
-        for i in range(30):
-            # handles moving and popping from stack
-            if moved == True:
-                draw_obstacle(cells_ref[current_cell],turtle_variable,'Brown')
-                path_taken.append(cells_ref[current_cell])
-                if cells_ref[current_cell] == cells_ref[exit]:
-                    # print("Winner")
+            for path in rev_path_taken:
+
+                if cells_ref[current_cell] == path:
                     break
-                moved = False
-            else:
-                rev_path_taken = list(reversed(path_taken))
-                current_cell = stack.pop()
-
-                for path in rev_path_taken:
-                    if cells_ref[current_cell] == path:
-                        break
+                
+                if cells_ref[441] != path:
                     draw_obstacle(path,turtle_variable,'White')
                     del path_taken[path_taken.index(path)]
 
 
-            nb, dic, factor = neighboring_cell(height,width,cells_size,current_cell)
+        nb, dic, factor = neighboring_cell(height,width,cells_size,current_cell)
 
 
-            stack_it , paths = stack_control(cells_ref,dic,visit,obstacle_ref)
-            if stack_it:
-                stack.append(int(current_cell))
+        stack_it , paths = stack_control(cells_ref,dic,visit,obstacle_ref)
+        if stack_it:
+            stack.append(int(current_cell))
 
-            current_cell , moved = path_finder(paths,cells_ref,visit,obstacle_ref,columns,rows,end_point_column_index,end_point_row_index,current_cell)
-        break
+        current_cell , moved = path_finder(paths,cells_ref,visit,obstacle_ref,columns,rows,end_point_column_index,end_point_row_index,current_cell)
+
     return path_taken
 
 
@@ -578,12 +480,13 @@ def find_cell(cell_ref,pos_x,pos_y,cell_size):
     for cell in cell_ref:
         cords = cell[0]
         if pos_x in range(cords[0],cords[0]+cell_size) and pos_y in range(cords[1],cords[1]+cell_size):
-            cords_x = cords[0]+2
-            cords_y = cords[1]+2
+            cords_x = cords[0]+ cell_size /2
+            cords_y = cords[1]+ cell_size / 2
             
-            return cords_x, cords_y
+            return cords_x, cords_y,cell_ref.index(cell)
+            # return cords_x* unit, cords_y * unit
 
-    return 0,0
+    return 0,0, cell_ref.index(cell)
 
 def world_pos_tracker(turtle_variable):
     """
@@ -614,102 +517,200 @@ def world_pos_tracker(turtle_variable):
     # message = f" > {robot_name} now at position {tuple(position)}."
     return position,degree
 
-from sandnew import rotate_robot
-# def rotate_robot(actual_degree, current_degree):
-#     """
-#     Calculates the number of times to turn the robot left/right
-#     so that it is facing the correct direction that it needs to move forward in
 
-#     Args:
-#         actual_degree (int): the degree the robot needs to be facing in order to move forward in the specified direction
-#         current_degree (int): the degree the robot is currently facing
-#     Returns:
-#         int : the number of times the robot needs to turn and in what direction (- left / + right)
-#     """
-#     turns = 0
-#     while True:
+def rotate_robot(actual_degree, current_degree):
+    """
+    Calculates the number of times to turn the robot left/right
+    so that it is facing the correct direction that it needs to move forward in
 
-#         if actual_degree == current_degree:
-#             return 0
+    Args:
+        actual_degree (int): the degree the robot needs to be facing in order to move forward in the specified direction
+        current_degree (int): the degree the robot is currently facing
+    Returns:
+        int : the number of times the robot needs to turn and in what direction (- left / + right)
+    """
+    
+    north = [90,-270]
+    south = [-90,270]
+    east = [0,360]
+    west = [180,-180]
+    if current_degree in north:
+        # the idea is if we by 90/-270 and we want to go to 180
+        if actual_degree in north:
+            return None
+        
+        if actual_degree in west:
+            turn = ['Left']
+        elif actual_degree in east:
+            turn = ['Right']
+        else:
+            turn = ['Right','Right']
 
-#         if current_degree < 0:
-#             if current_degree < actual_degree:
-#                 current_degree = current_degree + 90
-#                 turns += 1  # turn right
-#             else:
-#                 current_degree = current_degree - 90
-#                 turns-= 1   # turn left
-#         else:
-#             if current_degree < actual_degree:
-#                 current_degree = current_degree + 90
-#                 turns -= 1  # turn left
-#             else:
-#                 current_degree = current_degree - 90
-#                 turns+= 1   # turn right
+    
+    elif current_degree in south:
+        
+        if actual_degree in south:
+            return None
 
-#         if current_degree == actual_degree:
-#             break
+        if actual_degree in east:
+            turn = ['Left']
+        elif actual_degree in west:
+            turn = ['Right']
+        else:
+            turn = ['Right','Right']
+            
+    elif current_degree in east:
+        
+        if actual_degree in east:
+            return None
+        
+        if actual_degree in north:
+            turn = ['Left']
+        elif actual_degree in south:
+            turn = ['Right']
+        else:
+            turn = ['Right','Right']
+            
+    else:
+        
+        if actual_degree in west:
+            return None
+        
+        if actual_degree in north:
+            turn = ['Right']
+        elif actual_degree in south:
+            turn = ['Left']
+        else:
+            turn = ['Right','Right']
 
-#     return turns
+    return turn
 
 
-def generate_commands(cords,turtle_variable,path_taken,cell_ref,factor, cell_size = 4):
-    indexes, commands, old,breaker = [], [], None,None
+def command_splitter(command: str):
+    """Splits the command into two parts, command and parameter
+
+    Args:
+        command (str): command given to the robot
+
+    Returns:
+        list: the list consists of the command and its parameter if any
+    """
+
+    commands = command.split(" ")
+    return commands
+
+
+
+def command_handler(robot_name,command,x,y,degree,turtle_variable,obstacle):
+
+    # The command is split in two parts in list format [Command, Parameter]
+    # in our com_n_par list, the command is always at index 0
+    command = command_splitter(command)
+
+
+    if "Right" in command or "Left" in command:
+        x,y,degree,message,invalid_com = movement_logics.turn_logic(robot_name,command,x,y,degree,turtle_variable)
+    else:
+        x,y,degree,message,invalid_com = movement_logics.movement_logic(robot_name,command,x,y,degree,turtle_variable,obstacle)
+
+    return x,y,degree,message,invalid_com
+
+def fix_degree(current_degree):
+    
+
+    
+    if current_degree == -270:
+        current_degree = 90
+    elif current_degree == -90:
+        current_degree = 270
+    elif current_degree == -180:
+        current_degree = 180
+    elif current_degree == 360:
+        current_degree = 0
+
+    return current_degree
+
+def generate_steps_command(x,y,current_degree,cell_size):
+    if current_degree == 0 and x + cell_size > 100:
+        command = " ".join(['Forward',f'{100 - x}'])
+
+    elif current_degree == 180 and x - cell_size < - 100:
+        command = " ".join(['Forward',f'{100 + x}'])
+
+    elif current_degree == 90 and y + cell_size > 200:
+        command = " ".join(['Forward',f'{200 - y}'])
+
+    elif current_degree == 270 and y - cell_size < - 200:
+        command = " ".join(['Forward',f'{200 + y}'])
+
+    else:
+        command = " ".join(['Forward',f'{cell_size}'])
+        
+    return command
+
+# addition 2.1:
+# def generate_commands(cords,turtle_variable,path_taken,cell_ref,factor, cell_size = 4,unit = 1.5):
+def solve_maze(cords,robot_name,turtle_variables,path_taken,cell_ref,obstacles,factor,hunt = "top" ,cell_size = 10,unit = 1.5):
+    # from sandbox import command_handler
+    turtle_variable =turtle_variables
+    path_cells, old_cell,breaker = [], None,None
+    data = []
     x,y,current_degree = cords
     
     for cell in path_taken:
         
         if cell in cell_ref:
-            indexes.append(cell_ref.index(cell))
+            path_cells.append(cell_ref.index(cell))
 
-
-    for path in indexes:
+    # cell_size = int(cell_size /2 * unit)
+    i = 0
+    for new_cell in path_cells:
+        
+        # new function
+        current_degree =fix_degree(int(current_degree))
 
         # using degrees we can then decide if we should turn or not
-        if old != path and old != None:
-            if old + 1 ==  path:
+        if old_cell != new_cell and old_cell != None:
+            if old_cell + 1 ==  new_cell:
                 actual_degree = 90
                 turns = rotate_robot(actual_degree,current_degree)
-                if turns != None:
-                    for dir in turns:
-                        commands.append(dir)
-                com = " ".join(['Forward',f'{cell_size}'])
-                commands.append(com)
 
-            elif old - 1 == path:
+
+            elif old_cell - 1 == new_cell:
                 actual_degree = 270
                 turns = rotate_robot(actual_degree,current_degree)
-                if turns != None:
-                    for dir in turns:
-                        commands.append(dir)
-                com = " ".join(['Forward',f'{cell_size}'])
-                commands.append(com)
 
-            elif old - factor == path:
+
+            elif old_cell - factor == new_cell:
                 actual_degree = 180
                 turns = rotate_robot(actual_degree,current_degree)
-                if turns != None:
-                    for dir in turns:
-                        commands.append(dir)
-                com = " ".join(['Forward',f'{cell_size}'])
-                commands.append(com)
 
-            elif old + factor == path:
+
+            elif old_cell + factor == new_cell:
                 actual_degree = 0
                 turns = rotate_robot(actual_degree,current_degree)
-                if turns != None:
-                    for dir in turns:
-                        commands.append(dir)
-                com = " ".join(['Forward',f'{cell_size}'])
-                commands.append(com)
 
-            if old != None:
-                current_degree = actual_degree
-            else:
-                current_degree = current_degree
-            old = path
+
+            if turns != None:
+                for command in turns:
+                    x,y,current_degree, message, invalid_com = command_handler(robot_name,command,x,y,current_degree,turtle_variable,obstacles)
+                    coordinates = (x,y,current_degree)
+                    world.position_tracker(robot_name,coordinates,turtle_variable)
+
+
+            command = generate_steps_command(x,y,current_degree,cell_size)
+
+            x,y,current_degree, message, invalid_com = command_handler(robot_name,command,x,y,current_degree,turtle_variable,obstacles)
+            coordinates = (x,y,current_degree)
+            world.position_tracker(robot_name,coordinates,turtle_variable)
+            
         else:
-            com = " ".join(['Forward',f'{cell_size}'])
-            old = path
 
-    return commands
+            # shifting into the centre of the starting cell
+            position, current_degree = world_pos_tracker(turtle_variable)
+            x,y = int(position[0]- cell_size / 2), int(position[1]+ cell_size /2)
+            turtle_variable.goto(x,y)
+
+        old_cell = new_cell
+
+    return x,y,current_degree

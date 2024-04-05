@@ -3,7 +3,7 @@ import sys
 import movement_logics
 import replay
 import import_helper
-from flood_fill import maze_runner, generate_commands, find_cell
+from mazerunner.flood_fill import maze_runner, solve_maze, find_cell
 
 
 # Initializer, loaded text or graphical version
@@ -22,6 +22,8 @@ if 'turtle' in gui_loader:
 else:
     turtle_variable = None
 
+unit = 1
+# unit = 1.5
 
 def importer(robot_name: str):
     """
@@ -278,6 +280,25 @@ def replay_logic(robot_name: str,command: str,x:int,y:int,degree:int,history: li
     return x,y,degree,message,invalid_com
 
 
+# mazerun logic
+def mazerun_direction(robot_name, command:str):
+    
+    command = command_splitter(command)
+    directions = ["top","right","left","bottom"]
+    message,direction = None,None
+    
+    if len(command) == 1:
+        direction = "top"
+        
+    elif len(command) == 2 and command[1].lower() in directions :
+        direction = command[1].lower()
+    else:
+        message = invalid_command(robot_name," ".join(command).strip())
+        
+    return message , direction
+
+
+
 # main game logic
 def main_logic(robot_name,turtle_variable,obstacle,exits,cells_ref,obstacles,factor):
     # The robots axises. The at keeps track of the robots movement and position
@@ -302,29 +323,19 @@ def main_logic(robot_name,turtle_variable,obstacle,exits,cells_ref,obstacles,fac
             help_user()
             
         elif "Mazerun" in command:
-
+            print(f"{robot_name}: Starting maze run..")
+            message,direction = mazerun_direction(robot_name,command)
             
-            try:
-                cell = obstacles.create_obstacle(x,y,4)
-                current_cell = cells_ref.index(cell)
-            except ValueError:
-                cell = obstacles.create_obstacle(x-2,y-2,4)
-                current_cell = cells_ref.index(cell)
-            path_taken = maze_runner(cells_ref,exits,obstacle,current_cell,[],408,208,4,"south",turtle.Turtle(),x,y,degree)
-            commands = generate_commands((x,y,degree),turtle_variable,path_taken,cells_ref,factor,2)
-            # commands = ['Forward 4','Right', 'Forward 4', 'Left', 'Forward 4', 'Right', 'Forward 4', 'Left', 'Forward 4', 'Forward 4', 'Forward 4', 'Right', 'Forward 4', 'Forward 4', 'Left', 'Forward 4', 'Right', 'Forward 4', 'Forward 4', 'Left', 'Left', 'Left', 'Forward 4', 'Right', 'Right', 'Right', 'Forward 4', 'Left', 'Left', 'Left', 'Forward 4', 'Forward 4', 'Right', 'Right', 'Right', 'Forward 4', 'Left', 'Forward 4', 'Right', 'Forward 4', 'Forward 4']
-            turtle_variable.goto(x,y)
-            x,y = find_cell(cells_ref,x,y,4)
-            for command in commands:
-                # turns = ['Right','Left']
-                # if command in turns:
-                #     turn = command
+            if message == None:
+                x1, y2,current_cell = find_cell(cells_ref,x,y,10)
+                # current_cell = current_cell + int(factor)
                 
-                x,y,degree, message, invalid_com = command_handler(robot_name,command,x,y,degree,turtle_variable,obstacle)
-                coordinates = (x,y,degree)
-                world.position_tracker(robot_name,coordinates,turtle_variable)
-            # generate commands, pass it to command handle
-
+                path_taken = maze_runner(cells_ref,exits,obstacle,current_cell,[],420,220,10,direction,turtle.Turtle(),x,y,degree)
+                # path_taken = maze_runner(cells_ref,exits,obstacle,current_cell,[],408,208,4,"south",turtle.Turtle(),x,y,degree)
+                x,y ,degree = solve_maze((x,y,degree),robot_name,turtle_variable,path_taken,cells_ref,obstacle,factor)
+                print(f"{robot_name}: I am at the {direction} edge.")
+            else:
+                print(message)
 
         elif "Replay" in command or (command.count("-") == 1):
             x,y,degree,message,invalid_com = replay_logic(robot_name,command,x,y,degree,history,turtle_variable,obstacle)
@@ -369,7 +380,7 @@ def robot_start():
             
 
     
-    main_logic(robot_name,turtle_variable,obs,exits,cell_ref,obstacles,factor)
+    main_logic(robot_name,turtle_variable,obstacle,exits,cell_ref,obstacles,factor)
     return
 
 
