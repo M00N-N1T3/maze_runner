@@ -193,7 +193,7 @@ def maze_run(cells_ref,exit_points, obstacle_ref,current_cell,visited_cells,heig
     return None
 
 
-def solve_maze(coordinates,robot_name,turtle_variable,path_taken,cells_ref,obstacles,factor, hunt = "top",cell_size = 10, unit = 1.5):
+def solve_maze(coordinates,robot_name,turtle_variable,path_taken,cells_ref,obstacles,factor, hunt = "top",cell_size = 4, unit = 1.5):
     """
     Using the corresponding robot, solve maze will issue a set of commands that will enable the robot
     to traverse through the maze to the corresponding edge of the maze if specified.
@@ -256,7 +256,7 @@ def solve_maze(coordinates,robot_name,turtle_variable,path_taken,cells_ref,obsta
             coordinates=(x,y,current_degree)
             world.position_tracker(robot_name,coordinates,turtle_variable)
 
-            command = generate_steps_command(x,y,current_degree,10)
+            command = generate_steps_command(x,y,current_degree,4)
             x,y,current_degree,message,invalid = command_handler(robot_name,command,x,y,current_degree,turtle_variable,obstacles)
             coordinates=(x,y,current_degree)
             world.position_tracker(robot_name,coordinates,turtle_variable)
