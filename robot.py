@@ -3,15 +3,14 @@ import sys
 import movement_logics
 import replay
 import import_helper
-# from flood_fill import maze_runner, solve_maze, find_cell
-# from mazesolver.simple_flood import solve_maze
+from os import getcwd, listdir
+from os.path import join, exists
 
 
 # Initializer, loaded text or graphical version
 gui_loader = sys.argv
 gui_loader = [word.lower() for word in gui_loader]
-# gui_loader.append('turtle')
-# gui_loader.append('garden_of_eden')
+
 
 
 if 'turtle' in gui_loader:
@@ -23,39 +22,30 @@ if 'turtle' in gui_loader:
 else:
     turtle_variable = None
 
+
+
 unit = 1
-# unit = 1.5
 
-# def importer(robot_name: str):
-#     """
-#     Loads a specific maze, specified by the user
-#     """
-#     if len(gui_loader) > 2:
-#         maze_loader = gui_loader[2]
-#         maze_module = "flood_fill"
-#     else:
-#         maze_loader = 'obstacles'
-#         maze_module = "simple_flood"
-
-
-#     obstacles = import_helper.dynamic_import(f'maze.{maze_loader}')
-#     maze_runner = import_helper.dynamic_import(f'mazerunner.{maze_module}')
-#     message = f'{robot_name}: Loaded {maze_loader}.'
-
-
-
-#     return obstacles,maze_runner, message
-        
 
 
 def importer(robot_name: str):
     """
-    Loads a specific maze, specified by the user
+    Loads a specific maze module as specified by the user along with the correct mazerunner module
     """
-    if len(gui_loader) > 2:
+    maze_loader = "obstacles"
+    
+    if len(gui_loader) > 2 and exists(join(getcwd(),'maze',f'{gui_loader[2]}.py')):
         maze_loader = gui_loader[2]
+    elif len(gui_loader) == 2 and exists(join(getcwd(),'maze',f'{gui_loader[1]}.py')):
+        maze_loader = gui_loader[1]
     else:
         maze_loader = 'obstacles'
+
+    if "obstacles" == maze_loader:
+        maze_runner_module = "simple_flood"
+    else:
+        maze_runner_module = "flood_fill"
+
 
     if len(maze_loader) <= 2:
         obstacles = import_helper.dynamic_import('maze.obstacles')
@@ -65,15 +55,11 @@ def importer(robot_name: str):
         obstacles = import_helper.dynamic_import(f'maze.{maze_loader}')
         message = f'{robot_name}: Loaded {maze_loader}.'
 
-    if maze_loader == "obstacles":
-        maze_runner = "simple_flood"
-    else:
-        maze_runner = "flood_fill"
     
-    maze_runner = import_helper.dynamic_import(f'mazerunner.simple_flood')
+    maze_runner = import_helper.dynamic_import(f'mazerunner.{maze_runner_module}')
 
     return obstacles, maze_runner, message
-        
+
 
 # Intro
 def name_robot():
@@ -357,12 +343,12 @@ def main_logic(robot_name,turtle_variable,obstacle,exits,cells_ref,obstacles,maz
             message,direction = mazerun_direction(robot_name,command)
             
             if message == None:
-                x1, y2,current_cell = maze_runner.find_cell(cells_ref,x,y,10)
+                x1, y2,current_cell = maze_runner.find_cell(cells_ref,x,y,4)
                 
                 if current_cell != None:
                     current_cell = current_cell + int(factor)
                 
-                path_taken = maze_runner.maze_run(cells_ref,exits,obstacle,current_cell,[],420,220,10,direction,turtle_variable,x,y,degree)
+                path_taken = maze_runner.maze_run(cells_ref,exits,obstacle,current_cell,[],420,220,4,direction,turtle_variable,x,y,degree)
                 x,y ,degree = maze_runner.solve_maze((x,y,degree),robot_name,turtle_variable,path_taken,cells_ref,obstacle,factor,direction)
                 print(f"{robot_name}: I am at the {direction} edge.")
             else:

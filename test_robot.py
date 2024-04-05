@@ -74,8 +74,12 @@ class Test_Powering_OFF(unittest.TestCase):
 
 class Test_Help(unittest.TestCase):
     def test_help_command1(self):
-        obstacle = generate_obstacles()
+        obstacles = __import__("maze.obstacles",fromlist=["obstacles"])
+        obstacle = obstacles.generate_obstacles()
+        exits, cell_ref,factor = None, None, None
+        maze_runner = __import__("mazerunner.simple_flood",fromlist=["simple_flood"])
         robot_name = "Helper"
+
         expected_out = f"""{robot_name}: What must I do next? I can understand these commands:
 OFF  - Shut down robot\nHELP - provide information about commands
 Forward - Moves the robot forward (Example: forward 10)\nBack - Moves the robot backwards (Example: back 10)
@@ -86,13 +90,18 @@ Replay silent - Replays Previous commands silently and moves the robot according
 {robot_name}: What must I do next? Helper: Shutting down.."""
 
         with captured_io(StringIO("help\noff\n")) as (out, err):
-            main_logic(robot_name,turtle_variable,obstacle)
+            main_logic(robot_name,turtle_variable,obstacle,exits,cell_ref,obstacles,maze_runner,factor)
         output = out.getvalue().strip()
         self.assertEqual(output, expected_out)
 
+
     def test_help_command2(self):
-        obstacle = generate_obstacles()
+        obstacles = __import__("maze.obstacles",fromlist=['obstacles'])
+        obstacle = obstacles.generate_obstacles()
+        exits, cell_ref,factor = None, None, None
+        maze_runner = __import__("mazerunner.simple_flood",fromlist=["simple_flood"])
         robot_name = "Helper"
+
         expected_out = f"""{robot_name}: What must I do next? I can understand these commands:
 OFF  - Shut down robot
 HELP - provide information about commands
@@ -106,13 +115,18 @@ Replay silent - Replays Previous commands silently and moves the robot according
 {robot_name}: What must I do next? Helper: Shutting down.."""
 
         with captured_io(StringIO("HELP\noff\n")) as (out, err):
-            main_logic(robot_name,turtle_variable,obstacle)
+            main_logic(robot_name,turtle_variable,obstacle,exits,cell_ref,obstacles,maze_runner,factor)
         output = out.getvalue().strip()
         self.assertEqual(output, expected_out)
 
+
     def test_help_command3(self):
-        obstacle = generate_obstacles()
+        obstacles = __import__("maze.obstacles",fromlist=['obstacles'])
+        obstacle = obstacles.generate_obstacles()
+        exits, cell_ref,factor = None, None, None
+        maze_runner = __import__("mazerunner.simple_flood",fromlist=["simple_flood"])
         robot_name = "Helper"
+
         expected_out = f"""{robot_name}: What must I do next? I can understand these commands:
 OFF  - Shut down robot
 HELP - provide information about commands
@@ -125,7 +139,7 @@ Replay silent - Replays Previous commands silently and moves the robot according
 {robot_name}: What must I do next? Helper: Shutting down.."""
 
         with captured_io(StringIO("Help\noff\n")) as (out, err):
-            main_logic(robot_name,turtle_variable,obstacle)
+            main_logic(robot_name,turtle_variable,obstacle,exits,cell_ref,obstacles,maze_runner,factor)
         output = out.getvalue().strip()
         self.assertEqual(expected_out, output)
 
@@ -222,49 +236,61 @@ class Test_Forward_command(unittest.TestCase):
     # add to expected output
 
     def test_correct_input1(self):
-        obstacle = generate_obstacles()
+        obstacles = __import__("maze.obstacles",fromlist=['obstacles'])
+        maze_runner = __import__("mazerunner.simple_flood",fromlist=["simple_flood"])
+        obstacle, exits, cell_ref,factor = obstacles.generate_obstacles()
         robot_name = "Slow_mover"
+
         expected_out = f"""{robot_name}: What must I do next?  > {robot_name} moved forward by 10 steps.
  > {robot_name} now at position (0,10).
 {robot_name}: What must I do next? {robot_name}: Shutting down.."""
 
         with captured_io(StringIO("Forward 10\noff\n")) as (out, err):
-            main_logic(robot_name,turtle_variable,obstacle)
+            main_logic(robot_name,turtle_variable,obstacle,exits,cell_ref,obstacles,maze_runner,factor)
         output = out.getvalue().strip()
         self.assertEqual(output, expected_out)
 
     def test_correct_input2(self):
-        obstacle = generate_obstacles()
+        obstacles = __import__("maze.obstacles",fromlist=['obstacles'])
+        maze_runner = __import__("mazerunner.simple_flood",fromlist=["simple_flood"])
+        obstacle, exits, cell_ref,factor = obstacles.generate_obstacles()
         robot_name = "Slow_mover"
+
         expected_out = f"""{robot_name}: What must I do next?  > {robot_name} moved forward by 123 steps.
  > {robot_name} now at position (0,123).\n{robot_name}: What must I do next? {robot_name}: Shutting down.."""
 
         with captured_io(StringIO("Forward 123\noff\n")) as (out, err):
-            main_logic(robot_name,turtle_variable,obstacle)
+            main_logic(robot_name,turtle_variable,obstacle,exits,cell_ref,obstacles,maze_runner,factor)
         output = out.getvalue().strip()
         self.assertEqual(output, expected_out)
 
     def test_incorrect_input1(self):
-        obstacle = generate_obstacles()
+        obstacles = __import__("maze.obstacles",fromlist=['obstacles'])
+        maze_runner = __import__("mazerunner.simple_flood",fromlist=["simple_flood"])
+        obstacle, exits, cell_ref,factor = obstacles.generate_obstacles()
         robot_name = "Slow_mover"
+
         expected_out = f"""{robot_name}: What must I do next? Specify number of steps in digits (Example: forward 10).
 {robot_name}: What must I do next?  > {robot_name} moved forward by 123 steps.\n > {robot_name} now at position (0,123).
 {robot_name}: What must I do next? {robot_name}: Shutting down.."""
 
         with captured_io(StringIO("Forward\nForward 123\noff\n")) as (out, err):
-            main_logic(robot_name,turtle_variable,obstacle)
+            main_logic(robot_name,turtle_variable,obstacle,exits,cell_ref,obstacles,maze_runner,factor)
         output = out.getvalue().strip()
         self.assertEqual(output, expected_out)
 
     def test_incorrect_input2(self):
-        obstacle = generate_obstacles()
+        obstacles = __import__("maze.obstacles",fromlist=['obstacles'])
+        maze_runner = __import__("mazerunner.simple_flood",fromlist=["simple_flood"])
+        obstacle, exits, cell_ref,factor = obstacles.generate_obstacles()
         robot_name = "Slow_mover"
+        
         expected_out = f"""{robot_name}: What must I do next? Specify number of steps in digits (Example: forward 10).
 {robot_name}: What must I do next?  > {robot_name} moved forward by 123 steps.\n > {robot_name} now at position (0,123).
 {robot_name}: What must I do next? {robot_name}: Shutting down.."""
 
         with captured_io(StringIO("Forward two\nForward 123\noff\n")) as (out, err):
-            main_logic(robot_name,turtle_variable,obstacle)
+            main_logic(robot_name,turtle_variable,obstacle,exits,cell_ref,obstacles,maze_runner,factor)
         output = out.getvalue().strip()
         self.assertEqual(output, expected_out)
 
@@ -274,32 +300,41 @@ class Test_Backward_command(unittest.TestCase):
     # add to expected output
 
     def test_correct_input1(self):
-        obstacle = generate_obstacles()
+        obstacles = __import__("maze.obstacles",fromlist=['obstacles'])
+        maze_runner = __import__("mazerunner.simple_flood",fromlist=["simple_flood"])
+        obstacle, exits, cell_ref,factor = obstacles.generate_obstacles()
         robot_name = "Back_up"
+
         expected_out = f"""{robot_name}: What must I do next?  > {robot_name} moved forward by 10 steps.
  > {robot_name} now at position (0,10).\n{robot_name}: What must I do next?  > {robot_name} moved back by 5 steps.
  > {robot_name} now at position (0,5).\n{robot_name}: What must I do next? {robot_name}: Shutting down.."""
 
         with captured_io(StringIO("Forward 10\nBack 5\noff\n")) as (out, err):
-            main_logic(robot_name,turtle_variable,obstacle)
+            main_logic(robot_name,turtle_variable,obstacle,exits,cell_ref,obstacles,maze_runner,factor)
         output = out.getvalue().strip()
         self.assertEqual(output, expected_out)
 
     def test_correct_input2(self):
-        obstacle = generate_obstacles()
+        obstacles = __import__("maze.obstacles",fromlist=['obstacles'])
+        maze_runner = __import__("mazerunner.simple_flood",fromlist=["simple_flood"])
+        obstacle, exits, cell_ref,factor = obstacles.generate_obstacles()
         robot_name = "Back_up"
+
         expected_out = f"""{robot_name}: What must I do next?  > {robot_name} moved forward by 123 steps.
  > {robot_name} now at position (0,123).\n{robot_name}: What must I do next?  > {robot_name} moved back by 100 steps.
  > {robot_name} now at position (0,23).\n{robot_name}: What must I do next? {robot_name}: Shutting down.."""
 
         with captured_io(StringIO("Forward 123\nback 100\noff\n")) as (out, err):
-            main_logic(robot_name,turtle_variable,obstacle)
+            main_logic(robot_name,turtle_variable,obstacle,exits,cell_ref,obstacles,maze_runner,factor)
         output = out.getvalue().strip()
         self.assertEqual(output, expected_out)
 
     def test_incorrect_input1(self):
-        obstacle = generate_obstacles()
+        obstacles = __import__("maze.obstacles",fromlist=['obstacles'])
+        maze_runner = __import__("mazerunner.simple_flood",fromlist=["simple_flood"])
+        obstacle, exits, cell_ref,factor = obstacles.generate_obstacles()
         robot_name = "Back_up"
+
         expected_out = f"""{robot_name}: What must I do next? Specify number of steps in digits (Example: forward 10).
 {robot_name}: What must I do next?  > {robot_name} moved forward by 100 steps.\n > {robot_name} now at position (0,100).
 {robot_name}: What must I do next?  > {robot_name} moved back by 90 steps.\n > {robot_name} now at position (0,10).
@@ -309,13 +344,16 @@ class Test_Backward_command(unittest.TestCase):
             out,
             err,
         ):
-            main_logic(robot_name,turtle_variable,obstacle)
+            main_logic(robot_name,turtle_variable,obstacle,exits,cell_ref,obstacles,maze_runner,factor)
         output = out.getvalue().strip()
         self.assertEqual(output, expected_out)
 
     def test_incorrect_input2(self):
-        obstacle = generate_obstacles()
+        obstacles = __import__("maze.obstacles",fromlist=['obstacles'])
+        maze_runner = __import__("mazerunner.simple_flood",fromlist=["simple_flood"])
+        obstacle, exits, cell_ref,factor = obstacles.generate_obstacles()
         robot_name = "Back_up"
+
         expected_out = f"""{robot_name}: What must I do next? Specify number of steps in digits (Example: forward 10).
 {robot_name}: What must I do next?  > {robot_name} moved forward by 100 steps.\n > {robot_name} now at position (0,100).
 {robot_name}: What must I do next?  > {robot_name} moved back by 90 steps.\n > {robot_name} now at position (0,10).
@@ -325,7 +363,7 @@ class Test_Backward_command(unittest.TestCase):
             out,
             err,
         ):
-            main_logic(robot_name,turtle_variable,obstacle)
+            main_logic(robot_name,turtle_variable,obstacle,exits,cell_ref,obstacles,maze_runner,factor)
         output = out.getvalue().strip()
         self.assertEqual(output, expected_out)
 
@@ -333,54 +371,70 @@ class Test_Backward_command(unittest.TestCase):
 
 class Test_Turn_Right(unittest.TestCase):
     def test_one_rotation(self):
-        obstacle = generate_obstacles()
+        obstacles = __import__("maze.obstacles",fromlist=['obstacles'])
+        maze_runner = __import__("mazerunner.simple_flood",fromlist=["simple_flood"])
+        obstacle, exits, cell_ref,factor = obstacles.generate_obstacles()
+        turtle_variable = None
         robot_name = "Timmy Turner"
+
         expected_out = f"""{robot_name}: What must I do next?  > {robot_name} moved forward by 10 steps.
  > {robot_name} now at position (0,10).\n{robot_name}: What must I do next?  > {robot_name} turned right.
  > {robot_name} now at position (0,10).\n{robot_name}: What must I do next? {robot_name}: Shutting down.."""
 
         with captured_io(StringIO("Forward 10\nright\noff\n")) as (out, err):
-            main_logic(robot_name,turtle_variable,obstacle)
+            main_logic(robot_name,turtle_variable,obstacle,exits,cell_ref,obstacles,maze_runner,factor)
         output = out.getvalue().strip()
         self.assertEqual(output, expected_out)
 
     def test_two_rotation(self):
-        obstacle = generate_obstacles()
+        obstacles = __import__("maze.obstacles",fromlist=['obstacles'])
+        maze_runner = __import__("mazerunner.simple_flood",fromlist=["simple_flood"])
+        obstacle, exits, cell_ref,factor = obstacles.generate_obstacles()
+        turtle_variable = None
         robot_name = "Timmy Turner"
+
         expected_out = f"""{robot_name}: What must I do next?  > {robot_name} moved forward by 10 steps.
  > {robot_name} now at position (0,10).\n{robot_name}: What must I do next?  > {robot_name} turned right.
  > {robot_name} now at position (0,10).\n{robot_name}: What must I do next?  > {robot_name} turned right.
  > {robot_name} now at position (0,10).\n{robot_name}: What must I do next? {robot_name}: Shutting down.."""
 
         with captured_io(StringIO("Forward 10\nright\nright\noff\n")) as (out, err):
-            main_logic(robot_name,turtle_variable,obstacle)
+            main_logic(robot_name,turtle_variable,obstacle,exits,cell_ref,obstacles,maze_runner,factor)
         output = out.getvalue().strip()
         self.assertEqual(output, expected_out)
 
 
 class Test_Turn_Left(unittest.TestCase):
     def test_one_rotation(self):
-        obstacle = generate_obstacles()
+        obstacles = __import__("maze.obstacles",fromlist=['obstacles'])
+        maze_runner = __import__("mazerunner.simple_flood",fromlist=["simple_flood"])
+        obstacle, exits, cell_ref,factor = obstacles.generate_obstacles()
+        turtle_variable = None
         robot_name = "Timmy Turner"
+
         expected_out = f"""{robot_name}: What must I do next?  > {robot_name} moved forward by 10 steps.
  > {robot_name} now at position (0,10).\n{robot_name}: What must I do next?  > {robot_name} turned left.
  > {robot_name} now at position (0,10).\n{robot_name}: What must I do next? {robot_name}: Shutting down.."""
 
         with captured_io(StringIO("Forward 10\nleft\noff\n")) as (out, err):
-            main_logic(robot_name,turtle_variable,obstacle)
+            main_logic(robot_name,turtle_variable,obstacle,exits,cell_ref,obstacles,maze_runner,factor)
         output = out.getvalue().strip()
         self.assertEqual(output, expected_out)
 
     def test_two_rotation(self):
-        obstacle = generate_obstacles()
+        obstacles = __import__("maze.obstacles",fromlist=['obstacles'])
+        maze_runner = __import__("mazerunner.simple_flood",fromlist=["simple_flood"])
+        obstacle, exits, cell_ref,factor = obstacles.generate_obstacles()
+        turtle_variable = None
         robot_name = "Timmy Turner"
+
         expected_out = f"""{robot_name}: What must I do next?  > {robot_name} moved forward by 10 steps.
  > {robot_name} now at position (0,10).\n{robot_name}: What must I do next?  > {robot_name} turned left.
  > {robot_name} now at position (0,10).\n{robot_name}: What must I do next?  > {robot_name} turned left.
  > {robot_name} now at position (0,10).\n{robot_name}: What must I do next? {robot_name}: Shutting down.."""
 
         with captured_io(StringIO("Forward 10\nleft\nleft\noff\n")) as (out, err):
-            main_logic(robot_name,turtle_variable,obstacle)
+            main_logic(robot_name,turtle_variable,obstacle,exits,cell_ref,obstacles,maze_runner,factor)
         output = out.getvalue().strip()
         self.assertEqual(output, expected_out)
 
@@ -416,9 +470,12 @@ class Test_Movement_Mechanics(unittest.TestCase):
 class Test_Sprinting(unittest.TestCase):
     
     def test_sprinting_lower(self):
-        obstacle = generate_obstacles()
+        obstacles = __import__("maze.obstacles",fromlist=['obstacles'])
+        maze_runner = __import__("mazerunner.simple_flood",fromlist=["simple_flood"])
+        obstacle, exits, cell_ref,factor = obstacles.generate_obstacles()
         turtle_variable = None
         robot_name = "Sprinter"
+
         expected_output = f"""{robot_name}: What must I do next?  > {robot_name} moved forward by 5 steps.
  > {robot_name} moved forward by 4 steps.
  > {robot_name} moved forward by 3 steps.
@@ -428,14 +485,17 @@ class Test_Sprinting(unittest.TestCase):
 {robot_name}: What must I do next? {robot_name}: Shutting down.."""
         
         with captured_io(StringIO('sprint 5\noff\n')) as (out,err):
-            output = main_logic(robot_name,turtle_variable,obstacle)
+            output = main_logic(robot_name,turtle_variable,obstacle,exits,cell_ref,obstacles,maze_runner,factor)
             output = out.getvalue().strip()
         self.assertEqual(expected_output,output)
 
     def test_sprinting_invalid(self):
-        obstacle = generate_obstacles()
+        obstacles = __import__("maze.obstacles",fromlist=['obstacles'])
+        maze_runner = __import__("mazerunner.simple_flood",fromlist=["simple_flood"])
+        obstacle, exits, cell_ref,factor = obstacles.generate_obstacles()
         turtle_variable = None
         robot_name = "Sprinter"
+
         expected_output = f"""{robot_name}: What must I do next? Specify number of steps in digits (Example: sprint 10).
 {robot_name}: What must I do next?  > {robot_name} moved forward by 5 steps.
  > {robot_name} moved forward by 4 steps.
@@ -446,14 +506,17 @@ class Test_Sprinting(unittest.TestCase):
 {robot_name}: What must I do next? {robot_name}: Shutting down.."""
         
         with captured_io(StringIO('sprint\nSPRINT 5\noff\n')) as (out,err):
-            output = main_logic(robot_name,turtle_variable,obstacle)
+            output = main_logic(robot_name,turtle_variable,obstacle,exits,cell_ref,obstacles,maze_runner,factor)
             output = out.getvalue().strip()
         self.assertEqual(expected_output,output)
 
     def test_sprinting_upper(self):
-        obstacle = generate_obstacles()
+        obstacles = __import__("maze.obstacles",fromlist=['obstacles'])
+        maze_runner = __import__("mazerunner.simple_flood",fromlist=["simple_flood"])
+        obstacle, exits, cell_ref,factor = obstacles.generate_obstacles()
         turtle_variable = None
         robot_name = "Sprinter"
+
         expected_output = f"""{robot_name}: What must I do next?  > {robot_name} moved forward by 5 steps.
  > {robot_name} moved forward by 4 steps.
  > {robot_name} moved forward by 3 steps.
@@ -463,7 +526,7 @@ class Test_Sprinting(unittest.TestCase):
 {robot_name}: What must I do next? {robot_name}: Shutting down.."""
         
         with captured_io(StringIO('SPRINT 5\noff\n')) as (out,err):
-            output = main_logic(robot_name,turtle_variable,obstacle)
+            output = main_logic(robot_name,turtle_variable,obstacle,exits,cell_ref,obstacles,maze_runner,factor)
             output = out.getvalue().strip()
         self.assertEqual(expected_output,output)
 
@@ -510,8 +573,11 @@ class Test_Replay(unittest.TestCase):
     
     def test_replay(self):
         random.randint = lambda a,b : 0
-        obstacle = generate_obstacles()
+        obstacles = __import__("maze.obstacles",fromlist=['obstacles'])
+        maze_runner = __import__("mazerunner.simple_flood",fromlist=["simple_flood"])
+        obstacle, exits, cell_ref,factor = obstacles.generate_obstacles()
         robot_name = "Replayer"
+
         expected_out = f"""{robot_name}: What must I do next?  > {robot_name} moved forward by 10 steps.
  > {robot_name} now at position (0,10).\n{robot_name}: What must I do next?  > {robot_name} turned right.
  > {robot_name} now at position (0,10).\n{robot_name}: What must I do next?  > {robot_name} moved forward by 10 steps.
@@ -523,13 +589,17 @@ class Test_Replay(unittest.TestCase):
             out,
             err,
         ):
-            main_logic(robot_name,turtle_variable,obstacle)
+            main_logic(robot_name,turtle_variable,obstacle,exits,cell_ref,obstacles,maze_runner,factor)
         output = out.getvalue().strip()
         self.assertEqual(output, expected_out)
         
+        
     def test_replay_reversed(self):
-        obstacle = generate_obstacles()
+        obstacles = __import__("maze.obstacles",fromlist=['obstacles'])
+        maze_runner = __import__("mazerunner.simple_flood",fromlist=["simple_flood"])
+        obstacle, exits, cell_ref,factor = obstacles.generate_obstacles()
         robot_name = "Replayer"
+
         expected_out = f"""{robot_name}: What must I do next?  > {robot_name} moved forward by 10 steps.
  > {robot_name} now at position (0,10).\n{robot_name}: What must I do next?  > {robot_name} turned right.
  > {robot_name} now at position (0,10).\n{robot_name}: What must I do next?  > {robot_name} turned right.
@@ -541,14 +611,17 @@ class Test_Replay(unittest.TestCase):
             out,
             err,
         ):
-            main_logic(robot_name,turtle_variable,obstacle)
+            main_logic(robot_name,turtle_variable,obstacle,exits,cell_ref,obstacles,maze_runner,factor)
         output = out.getvalue().strip()
         self.assertEqual(output, expected_out)
     
     def test_replay_3_1_invalid(self):
         random.randint = lambda a,b : 0
-        obstacle = generate_obstacles()
+        obstacles = __import__("maze.obstacles",fromlist=['obstacles'])
+        maze_runner = __import__("mazerunner.simple_flood",fromlist=["simple_flood"])
+        obstacle, exits, cell_ref,factor = obstacles.generate_obstacles()
         robot_name = "Replayer"
+
         expected_out = f"""{robot_name}: What must I do next?  > {robot_name} moved forward by 10 steps.
  > {robot_name} now at position (0,10).\n{robot_name}: What must I do next?  > {robot_name} turned right.
  > {robot_name} now at position (0,10).\n{robot_name}: What must I do next? {robot_name}: Sorry, I did not understand 'Wrong'.
@@ -561,14 +634,17 @@ class Test_Replay(unittest.TestCase):
             out,
             err,
         ):
-            main_logic(robot_name,turtle_variable,obstacle)
+            main_logic(robot_name,turtle_variable,obstacle,exits,cell_ref,obstacles,maze_runner,factor)
         output = out.getvalue().strip()
         self.assertEqual(output, expected_out)
     
     def test_replay_silent(self):
         random.randint = lambda a,b : 0
-        obstacle = generate_obstacles()
+        obstacles = __import__("maze.obstacles",fromlist=['obstacles'])
+        maze_runner = __import__("mazerunner.simple_flood",fromlist=["simple_flood"])
+        obstacle, exits, cell_ref,factor = obstacles.generate_obstacles()
         robot_name = "Replayer"
+
         expected_out = f"""{robot_name}: What must I do next?  > {robot_name} moved forward by 10 steps.
  > {robot_name} now at position (0,10).\n{robot_name}: What must I do next?  > {robot_name} turned right.
  > {robot_name} now at position (0,10).\n{robot_name}: What must I do next?  > {robot_name} replayed 2 commands silently.
@@ -578,13 +654,16 @@ class Test_Replay(unittest.TestCase):
             out,
             err,
         ):
-            main_logic(robot_name,turtle_variable,obstacle)
+            main_logic(robot_name,turtle_variable,obstacle,exits,cell_ref,obstacles,maze_runner,factor)
         output = out.getvalue().strip()
         self.assertEqual(output, expected_out)
         
     def test_replay_reversed_silent(self):
-        obstacle = generate_obstacles()
+        obstacles = __import__("maze.obstacles",fromlist=['obstacles'])
+        maze_runner = __import__("mazerunner.simple_flood",fromlist=["simple_flood"])
+        obstacle, exits, cell_ref,factor = obstacles.generate_obstacles()
         robot_name = "Replayer"
+
         expected_out = f"""{robot_name}: What must I do next?  > {robot_name} moved forward by 10 steps.
  > {robot_name} now at position (0,10).\n{robot_name}: What must I do next?  > {robot_name} turned right.
  > {robot_name} now at position (0,10).\n{robot_name}: What must I do next?  > {robot_name} replayed 2 commands in reverse silently.
@@ -594,15 +673,18 @@ class Test_Replay(unittest.TestCase):
             out,
             err,
         ):
-            main_logic(robot_name,turtle_variable,obstacle)
+            main_logic(robot_name,turtle_variable,obstacle,exits,cell_ref,obstacles,maze_runner,factor)
         output = out.getvalue().strip()
         self.assertEqual(output, expected_out)
         
 class Test_Replay_Range(unittest.TestCase):
     
     def test_replay_range2(self):
-        obstacle = generate_obstacles()
+        obstacles = __import__("maze.obstacles",fromlist=['obstacles'])
+        maze_runner = __import__("mazerunner.simple_flood",fromlist=["simple_flood"])
+        obstacle, exits, cell_ref,factor = obstacles.generate_obstacles()
         robot_name = "Range"
+        
         expected_out = f"""{robot_name}: What must I do next?  > {robot_name} moved forward by 10 steps.
  > {robot_name} now at position (0,10).\n{robot_name}: What must I do next?  > {robot_name} turned right.
  > {robot_name} now at position (0,10).\n{robot_name}: What must I do next?  > {robot_name} moved forward by 10 steps.
@@ -614,13 +696,16 @@ class Test_Replay_Range(unittest.TestCase):
             out,
             err,
         ):
-            main_logic(robot_name,turtle_variable,obstacle)
+            main_logic(robot_name,turtle_variable,obstacle,exits,cell_ref,obstacles,maze_runner,factor)
         output = out.getvalue().strip()
         self.assertEqual(output, expected_out)
         
     def test_replay_range2_reversed(self):
-        obstacle = generate_obstacles()
+        obstacles = __import__("maze.obstacles",fromlist=['obstacles'])
+        maze_runner = __import__("mazerunner.simple_flood",fromlist=["simple_flood"])
+        obstacle, exits, cell_ref,factor = obstacles.generate_obstacles()
         robot_name = "Range"
+        
         expected_out = f"""{robot_name}: What must I do next?  > {robot_name} moved forward by 10 steps.
  > {robot_name} now at position (0,10).\n{robot_name}: What must I do next?  > {robot_name} turned right.
  > {robot_name} now at position (0,10).\n{robot_name}: What must I do next?  > {robot_name} turned right.
@@ -632,14 +717,17 @@ class Test_Replay_Range(unittest.TestCase):
             out,
             err,
         ):
-            main_logic(robot_name,turtle_variable,obstacle)
+            main_logic(robot_name,turtle_variable,obstacle,exits,cell_ref,obstacles,maze_runner,factor)
         output = out.getvalue().strip()
         self.assertEqual(output, expected_out)
     
     
     def test_replay_range2_3_invalid(self):
-        obstacle = generate_obstacles()
-        robot_name = "Replayer"
+        obstacles = __import__("maze.obstacles",fromlist=['obstacles'])
+        maze_runner = __import__("mazerunner.simple_flood",fromlist=["simple_flood"])
+        obstacle, exits, cell_ref,factor = obstacles.generate_obstacles()
+        robot_name = "Range"
+        
         expected_out = f"""{robot_name}: What must I do next?  > {robot_name} moved forward by 10 steps.
  > {robot_name} now at position (0,10).\n{robot_name}: What must I do next?  > {robot_name} turned right.
  > {robot_name} now at position (0,10).\n{robot_name}: What must I do next? {robot_name}: Sorry, I did not understand 'Wrong'.
@@ -652,14 +740,17 @@ class Test_Replay_Range(unittest.TestCase):
             out,
             err,
         ):
-            main_logic(robot_name,turtle_variable,obstacle)
+            main_logic(robot_name,turtle_variable,obstacle,exits,cell_ref,obstacles,maze_runner,factor)
         output = out.getvalue().strip()
         self.assertEqual(output, expected_out)
     
     
     def test_replay_range2_2_invalid(self):
-        obstacle = generate_obstacles()
-        robot_name = "Replayer"
+        obstacles = __import__("maze.obstacles",fromlist=['obstacles'])
+        maze_runner = __import__("mazerunner.simple_flood",fromlist=["simple_flood"])
+        obstacle, exits, cell_ref,factor = obstacles.generate_obstacles()
+        robot_name = "Range"
+        
         expected_out = f"""{robot_name}: What must I do next?  > {robot_name} moved forward by 10 steps.
  > {robot_name} now at position (0,10).\n{robot_name}: What must I do next? {robot_name}: Sorry, I did not understand 'Wrong'.
 {robot_name}: What must I do next?  > {robot_name} turned right.
@@ -672,14 +763,17 @@ class Test_Replay_Range(unittest.TestCase):
             out,
             err,
         ):
-            main_logic(robot_name,turtle_variable,obstacle)
+            main_logic(robot_name,turtle_variable,obstacle,exits,cell_ref,obstacles,maze_runner,factor)
         output = out.getvalue().strip()
         self.assertEqual(output, expected_out)
     
        
     def test_replay_range_silent(self):
-        obstacle = generate_obstacles()
-        robot_name = "Replayer"
+        obstacles = __import__("maze.obstacles",fromlist=['obstacles'])
+        maze_runner = __import__("mazerunner.simple_flood",fromlist=["simple_flood"])
+        obstacle, exits, cell_ref,factor = obstacles.generate_obstacles()
+        robot_name = "Range"
+        
         expected_out = f"""{robot_name}: What must I do next?  > {robot_name} moved forward by 10 steps.
  > {robot_name} now at position (0,10).\n{robot_name}: What must I do next?  > {robot_name} turned right.
  > {robot_name} now at position (0,10).\n{robot_name}: What must I do next?  > {robot_name} replayed 1 commands silently.
@@ -689,7 +783,7 @@ class Test_Replay_Range(unittest.TestCase):
             out,
             err,
         ):
-            main_logic(robot_name,turtle_variable,obstacle)
+            main_logic(robot_name,turtle_variable,obstacle,exits,cell_ref,obstacles,maze_runner,factor)
         output = out.getvalue().strip()
         self.assertEqual(output, expected_out)
         
