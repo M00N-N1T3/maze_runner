@@ -3,14 +3,13 @@ import sys
 import movement_logics
 import replay
 import import_helper
-from os import getcwd, listdir
+from os import getcwd
 from os.path import join, exists
 
 
 # Initializer, loaded text or graphical version
 gui_loader = sys.argv
 gui_loader = [word.lower() for word in gui_loader]
-
 
 
 if 'turtle' in gui_loader:
@@ -32,7 +31,6 @@ def importer(robot_name: str):
     """
     Loads a specific maze module as specified by the user along with the correct mazerunner module
     """
-    maze_loader = "obstacles"
     
     if len(gui_loader) > 2 and exists(join(getcwd(),'maze',f'{gui_loader[2]}.py')):
         maze_loader = gui_loader[2]
@@ -348,7 +346,7 @@ def main_logic(robot_name,turtle_variable,obstacle,exits,cells_ref,obstacles,maz
                 if current_cell != None:
                     current_cell = current_cell + int(factor)
                 
-                path_taken = maze_runner.maze_run(cells_ref,exits,obstacle,current_cell,[],420,220,4,direction,turtle_variable,x,y,degree)
+                path_taken = maze_runner.maze_run(cells_ref,exits,obstacle,current_cell,[],408,208,4,direction,turtle_variable,x,y,degree)
                 x,y ,degree = maze_runner.solve_maze((x,y,degree),robot_name,turtle_variable,path_taken,cells_ref,obstacle,factor,direction)
                 print(f"{robot_name}: I am at the {direction} edge.")
             else:

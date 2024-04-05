@@ -27,21 +27,27 @@ class Test_Track_Position(unittest.TestCase):
         self.assertEqual(output, expected_out)
 
     def test_move_twice(self):
-        obstacle = generate_obstacles()
+        obstacles = __import__("maze.obstacles",fromlist=['obstacles'])
+        maze_runner = __import__("mazerunner.simple_flood",fromlist=["simple_flood"])
+        obstacle, exits, cell_ref,factor = obstacles.generate_obstacles()
         robot_name = "Here-I-Am"
+
         expected_out = f"""{robot_name}: What must I do next?  > {robot_name} moved forward by 10 steps.
  > {robot_name} now at position (0,10).\n{robot_name}: What must I do next?  > {robot_name} moved forward by 15 steps.
  > {robot_name} now at position (0,25).\n{robot_name}: What must I do next? {robot_name}: Shutting down.."""
 
         with captured_io(StringIO("forward 10\nforward 15\noff\n")) as (out, err):
-            main_logic(robot_name,turtle_variable,obstacle)
+            main_logic(robot_name,turtle_variable,obstacle,exits,cell_ref,obstacles,maze_runner,factor)
         output = out.getvalue().strip()
         self.assertEqual(output, expected_out)
 
     def test_move_fwd_right_fwd(self):
         random.randint = lambda a,b : 0
-        obstacle = generate_obstacles()
+        obstacles = __import__("maze.obstacles",fromlist=['obstacles'])
+        maze_runner = __import__("mazerunner.simple_flood",fromlist=["simple_flood"])
+        obstacle, exits, cell_ref,factor = obstacles.generate_obstacles()
         robot_name = "Here-I-Am"
+
         expected_out = f"""{robot_name}: What must I do next?  > {robot_name} moved forward by 10 steps.
  > {robot_name} now at position (0,10).\n{robot_name}: What must I do next?  > {robot_name} turned right.
  > {robot_name} now at position (0,10).\n{robot_name}: What must I do next?  > {robot_name} moved forward by 10 steps.
@@ -51,39 +57,48 @@ class Test_Track_Position(unittest.TestCase):
             out,
             err,
         ):
-            main_logic(robot_name,turtle_variable,obstacle)
+            main_logic(robot_name,turtle_variable,obstacle,exits,cell_ref,obstacles,maze_runner,factor)
         output = out.getvalue().strip()
         self.assertEqual(output, expected_out)
         
         
 class Test_Limit_Area(unittest.TestCase):
     def test_x_greater_than_100(self):
-        obstacle = generate_obstacles()
+        obstacles = __import__("maze.obstacles",fromlist=['obstacles'])
+        maze_runner = __import__("mazerunner.simple_flood",fromlist=["simple_flood"])
+        obstacle, exits, cell_ref,factor = obstacles.generate_obstacles()
         robot_name = "Safty-Ofiicer"
+
         expected_out = f"""{robot_name}: What must I do next?  > {robot_name} moved forward by 10 steps.
  > {robot_name} now at position (0,10).\n{robot_name}: What must I do next? {robot_name}: Sorry, I cannot go outside my safe zone.
  > {robot_name} now at position (0,10).\n{robot_name}: What must I do next? {robot_name}: Shutting down.."""
 
         with captured_io(StringIO("forward 10\nforward 300\noff\n")) as (out, err):
-            main_logic(robot_name,turtle_variable,obstacle)
+            main_logic(robot_name,turtle_variable,obstacle,exits,cell_ref,obstacles,maze_runner,factor)
         output = out.getvalue().strip()
         self.assertEqual(output, expected_out)
 
     def test_x_greater_than_neg_100(self):
-        obstacle = generate_obstacles()
+        obstacles = __import__("maze.obstacles",fromlist=['obstacles'])
+        maze_runner = __import__("mazerunner.simple_flood",fromlist=["simple_flood"])
+        obstacle, exits, cell_ref,factor = obstacles.generate_obstacles()
         robot_name = "Safty-Ofiicer"
+
         expected_out = f"""{robot_name}: What must I do next?  > {robot_name} moved back by 10 steps.
  > {robot_name} now at position (0,-10).\n{robot_name}: What must I do next? {robot_name}: Sorry, I cannot go outside my safe zone.
  > {robot_name} now at position (0,-10).\n{robot_name}: What must I do next? {robot_name}: Shutting down.."""
 
         with captured_io(StringIO("Back 10\nBack 300\noff\n")) as (out, err):
-            main_logic(robot_name,turtle_variable,obstacle)
+            main_logic(robot_name,turtle_variable,obstacle,exits,cell_ref,obstacles,maze_runner,factor)
         output = out.getvalue().strip()
         self.assertEqual(output, expected_out)
 
     def test_y_greater_200(self):
-        obstacle = generate_obstacles()
+        obstacles = __import__("maze.obstacles",fromlist=['obstacles'])
+        maze_runner = __import__("mazerunner.simple_flood",fromlist=["simple_flood"])
+        obstacle, exits, cell_ref,factor = obstacles.generate_obstacles()
         robot_name = "Safty-Ofiicer"
+
         expected_out = f"""{robot_name}: What must I do next?  > {robot_name} turned right.\n > {robot_name} now at position (0,0).
 {robot_name}: What must I do next?  > {robot_name} moved forward by 10 steps.\n > {robot_name} now at position (10,0).
 {robot_name}: What must I do next? {robot_name}: Sorry, I cannot go outside my safe zone.\n > {robot_name} now at position (10,0).
@@ -93,20 +108,23 @@ class Test_Limit_Area(unittest.TestCase):
             out,
             err,
         ):
-            main_logic(robot_name,turtle_variable,obstacle)
+            main_logic(robot_name,turtle_variable,obstacle,exits,cell_ref,obstacles,maze_runner,factor)
         output = out.getvalue().strip()
         self.assertEqual(output, expected_out)
 
     def test_y_greater_neg_200(self):
-        obstacle = generate_obstacles()
+        obstacles = __import__("maze.obstacles",fromlist=['obstacles'])
+        maze_runner = __import__("mazerunner.simple_flood",fromlist=["simple_flood"])
+        obstacle, exits, cell_ref,factor = obstacles.generate_obstacles()
         robot_name = "Safty-Ofiicer"
+
         expected_out = f"""{robot_name}: What must I do next?  > {robot_name} turned right.\n > {robot_name} now at position (0,0).
 {robot_name}: What must I do next?  > {robot_name} moved back by 10 steps.\n > {robot_name} now at position (-10,0).
 {robot_name}: What must I do next? {robot_name}: Sorry, I cannot go outside my safe zone.\n > {robot_name} now at position (-10,0).
 {robot_name}: What must I do next? {robot_name}: Shutting down.."""
 
         with captured_io(StringIO("Right\nBack 10\nBack 300\noff\n")) as (out, err):
-            main_logic(robot_name,turtle_variable,obstacle)
+            main_logic(robot_name,turtle_variable,obstacle,exits,cell_ref,obstacles,maze_runner,factor)
         output = out.getvalue().strip()
         self.assertEqual(output, expected_out)
 

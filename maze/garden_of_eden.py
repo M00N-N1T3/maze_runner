@@ -504,15 +504,15 @@ def draw_obstacle(cell: list|tuple, color1: str,color2: str = None):
         turtle.hideturtle()
         turtle.penup()
         turtle.goto(int(x1),int(y1))
-        # turtle.goto(int(x1) * unit,int(y1) * unit)
-        turtle.pen(pendown=False,fillcolor=color1,pensize=0,pencolor=color2,speed=0)
+
+        turtle.pen(pendown=True,fillcolor=color1,pensize=0,pencolor=color2,speed=0)
         turtle.begin_fill()
         for cord in cell:
             x,y = cord
             turtle.goto(int(x),int(y))
-            # turtle.goto(int(x) * unit,int(y) * unit)
+
         turtle.goto(int(x1),int(y1))
-        # turtle.goto(int(x1) * unit,int(y1) * unit)
+
         turtle.end_fill()
 
         turtle.tracer(1)

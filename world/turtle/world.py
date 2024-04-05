@@ -8,7 +8,7 @@ unit = 1
 # unit = 1.5
 if 'turtle' in gui_loader:
     import turtle
-    # import sandbox as obstacles
+
 
 
 # tracking position
@@ -56,9 +56,7 @@ def position_tracker(robot_name: str,coordinates: tuple,turtle_variable: object)
     x,y,degree = coordinates
 
 
-    # The position the turtle must move to
-    # turtle_variable.goto(x*unit,y*unit)
-    turtle_variable.pendown()
+
     turtle_variable.goto(x,y)
     print(f" > {robot_name} now at position ({x},{y}).")
     return

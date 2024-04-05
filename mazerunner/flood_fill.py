@@ -322,43 +322,6 @@ def path_finder(paths,cells_ref,visited_cells,obstacle_ref,columns_ref,rows_ref,
     return current_cell,moved
 
 
-# def draw_obstacle(cell: list|tuple,turtle_variable, color1: str = None,color2: str = None):
-    # """
-    # Fills in the color of the obstacles/path
-
-    # Args:
-    #     cell (list | tuple): A list of all the cell coordinates
-    #     color (list_): The color you want to paint the cells
-    # """
-    # # starting coordinates for the cell color fill
-    # import turtle
-
-    # if 'turtle' in gui_loader:
-    #     x1,y1 = cell[0]
-
-    #     turtle.tracer(0)
-    #     turtle_variable.hideturtle()
-    #     turtle_variable.penup()
-    #     turtle_variable.goto(int(x1),int(y1))
-    #     # turtle_variable.goto(int(x1) * unit,int(y1) * unit)
-    #     turtle_variable.pen(pendown=True,fillcolor=color1,pensize=0,pencolor=color2,speed=0)
-    #     turtle_variable.begin_fill()
-    #     for cord in cell:
-    #         x,y = cord
-    #         turtle_variable.goto(int(x) ,int(y))
-    #         # turtle_variable.goto(int(x) * unit,int(y) * unit)
-    #     turtle_variable.goto(int(x1),int(y1))
-    #     # turtle_variable.goto(int(x1) * unit,int(y1) * unit)
-    #     turtle_variable.end_fill()
-
-    #     # turtle.tracer(1)
-    # else:
-    #     pass
-    
-    # return None
-
-
-
 def maze_run(cells_ref,exit_points, obstacle_ref,current_cell,visited_cells,height,width,cells_size,hunt,turtle_variable,x,y,degree):
     """
     The main maze run function. This function solves the maze via a process similar to depth first search. 
@@ -406,7 +369,6 @@ def maze_run(cells_ref,exit_points, obstacle_ref,current_cell,visited_cells,heig
     while True:
         # handles moving and popping from stack
         if moved == True:
-            # draw_obstacle(cells_ref[current_cell],turtle_variable,'Brown')
             path_taken.append(cells_ref[current_cell])
             if cells_ref[current_cell] == cells_ref[exit]:
                 # print("Winner")
@@ -422,7 +384,6 @@ def maze_run(cells_ref,exit_points, obstacle_ref,current_cell,visited_cells,heig
                     break
                 
                 if cells_ref[441] != path:
-                    # draw_obstacle(path,turtle_variable,'White')
                     del path_taken[path_taken.index(path)]
 
 
