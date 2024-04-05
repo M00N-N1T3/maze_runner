@@ -1,4 +1,4 @@
-from maze import obstacles
+from maze import obstacles_module as obstacles
 
 # tracking position
 def position_tracker(robot_name: str,coordinates: tuple,turtle_variable: object) -> str:

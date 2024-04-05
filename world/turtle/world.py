@@ -1,11 +1,9 @@
 from sys import argv
-# from maze import obstacles
-# from maze import garden_of_eden as obstacles
-from maze import obstacles
+from maze import obstacles_module as obstacles
 
 gui_loader = argv
 gui_loader = [word.lower() for word in gui_loader]
-# gui_loader.append('turtle')
+
 unit = 1
 # unit = 1.5
 if 'turtle' in gui_loader:
@@ -99,7 +97,6 @@ def draw_borders(maze_height = 200 or int, maze_width = 100 or int):
     border.goto(maze_width*unit,-maze_height*unit)
 
 # border patrol
-# def borders(command: list, degree: int,x: int,y: int,turtle_variable: object,maze_height: int = 200, maze_width: int = 100):
 def borders(command: list, degree: int,x: int,y: int,turtle_variable: object,maze_height: int = 200, maze_width: int = 100):
     """Sets a border and restricts how far the robot can actually in move a direction
 
@@ -264,8 +261,7 @@ def orientation_filter(degree: int):
     return degree
 
 
-# def show_obstacles(obstacle_ref: list, cell_size: int = 4):
-def show_obstacles(obstacle_ref: list, cell_size: int = 10):
+def show_obstacles(obstacle_ref: list, cell_size: int = 4):
     """
     Hints to the user the coordinates of all
     the available obstacles in the world if any
