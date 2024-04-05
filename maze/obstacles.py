@@ -72,7 +72,7 @@ def generate_obstacles(height=200 , width= 100, cell_size = 4):
 
     return obstacles , exits, None, None
 
-def draw_obstacles(obstacles: list|tuple,maze_height: int = 204 , maze_width: int = 104, cell_size: int = 4 , color:  str = 'white' ):
+def draw_obstacles(obstacles: tuple,maze_height: int = 204 , maze_width: int = 104, cell_size: int = 4 , color:  str = 'white' ):
     """
     Draws a visual representation of the obstacles within the turtle realm
 

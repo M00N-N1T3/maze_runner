@@ -487,7 +487,7 @@ def cell_design(cells_ref: list, ele_index: int, visited_cells: list, stack: lis
     stack.append(cells_ref[ele_index])
 
 
-def draw_obstacle(cell: list|tuple, color1: str,color2: str = None):
+def draw_obstacle(cell: tuple, color1: str,color2: str = None):
     """
     Fills in the color of the obstacles/path
 
